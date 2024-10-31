@@ -33,8 +33,8 @@
             if (!error && result && result.event === "success") {
                 console.log('Imagem enviada com sucesso:', result.info.secure_url);
 
-                // Usar a URL real do Cloudinary
-                const cleanUrl = result.info.secure_url; // Usando a URL gerada pelo Cloudinary
+                // Usar a ID da imagem como a URL personalizada
+                const cleanUrl = `https://site-stars.vercel.app/cards/${result.info.public_id}.png`;
 
                 document.getElementById('result').innerHTML = 
                     `<p>Imagem enviada! URL: <a href="${cleanUrl}" target="_blank">${cleanUrl}</a></p>`;

@@ -11,9 +11,6 @@ const port = process.env.PORT || 3000;
 // Configuração do CORS
 app.use(cors());
 
-// Array para armazenar URLs das imagens (em produção, use um banco de dados)
-let imageUrls = [];
-
 // Configuração do Cloudinary
 cloudinary.config({
   cloud_name: 'drxkjmcqx',
@@ -25,7 +22,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'uploads', // Pasta no Cloudinary onde as imagens serão salvas
+    folder: 'meus_links', // Certifique-se de que a pasta corresponde à que você está usando
     allowed_formats: ['jpg', 'png', 'jpeg'],
   },
 });
@@ -38,20 +35,22 @@ app.post('/upload', upload.single('image'), (req, res) => {
     return res.status(400).send('Nenhuma imagem foi enviada.');
   }
   const imageUrl = req.file.path;
-  imageUrls.push(imageUrl); // Armazena a URL no array
-  res.json({ url: imageUrl }); // URL pública da imagem no Cloudinary
+  res.json({ url: imageUrl, public_id: req.file.filename }); // Retorna o public_id
 });
 
-// Rota para listar todas as imagens enviadas
-app.get('/images', (req, res) => {
-  res.json(imageUrls); // Retorna o array de URLs
-});
-
-// Servir o HTML de upload
+// Rota para servir o HTML de upload
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Nova rota para servir imagens personalizadas
+app.get('/cards/:id', (req, res) => {
+  const { id } = req.params;
+  const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/v1730417578/meus_links/${id}.png`; // Adapte a URL base
+  res.redirect(imageUrl); // Redireciona para a URL real no Cloudinary
+});
+
+// Inicia o servidor
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
