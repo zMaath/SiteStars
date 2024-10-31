@@ -4,44 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload de Imagem</title>
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
 </head>
 <body>
   <h1>Upload de Imagem</h1>
-  <form id="uploadForm" enctype="multipart/form-data">
-    <input type="file" name="image" accept="image/*" required />
-    <button type="submit">Enviar Imagem</button>
-  </form>
+  <button id="uploadWidget">Enviar Imagem</button>
   <div id="result"></div>
-
-  <h2>Imagens Enviadas</h2>
   <div id="uploadedImages"></div>
 
   <script>
-    // Função para buscar e exibir imagens
-    async function fetchImages() {
-      const response = await fetch('/images');
-      const images = await response.json();
+    // Configurar o widget de upload do Cloudinary
+    const uploadWidget = cloudinary.createUploadWidget({
+      cloudName: 'drxkjmcqx', // Substitua pelo seu nome de cloud do Cloudinary
+      uploadPreset: 'gogofafa' // Certifique-se de ter um upload preset configurado
+    }, (error, result) => {
+      if (!error && result && result.event === "success") {
+        console.log('Imagem enviada com sucesso:', result.info.secure_url);
+        document.getElementById('result').innerHTML = 
+          `<p>Imagem enviada! URL: <a href="${result.info.secure_url}" target="_blank">${result.info.secure_url}</a></p>`;
+        addImage(result.info.secure_url);
+      }
+    });
+
+    document.getElementById("uploadWidget").addEventListener("click", function() {
+      uploadWidget.open();
+    }, false);
+
+    function addImage(url) {
       const imageContainer = document.getElementById('uploadedImages');
-      imageContainer.innerHTML = images
-        .map(url => `<img src="${url}" alt="Imagem carregada" width="200" />`)
-        .join('');
+      imageContainer.innerHTML += `<img src="${url}" alt="Imagem carregada" width="200" />`;
     }
-
-    // Chamar fetchImages ao carregar a página
-    fetchImages();
-
-    // Enviar imagem e atualizar a lista de imagens
-    document.getElementById('uploadForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const response = await fetch('/upload', { 
-        method: 'POST',
-        body: formData
-      });
-      const data = await response.json();
-      document.getElementById('result').innerHTML = `<p>Imagem enviada! URL: <a href="${data.url}" target="_blank">${data.url}</a></p>`;
-      fetchImages(); // Atualiza a lista de imagens após o upload
-    };
   </script>
 </body>
 </html>
