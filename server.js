@@ -43,12 +43,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Nova rota para servir imagens personalizadas
-app.get('/cards/:id', (req, res) => {
+// Rota para servir imagens personalizadas
+app.get('/image/:id', (req, res) => {
   const { id } = req.params;
 
   // Criar a URL correta para a imagem
-  const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/${id}.png`; // Ajuste a URL para não incluir 'meus_links'
+  const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/v1730417578/meus_links/${id}.png`; // Ajuste a URL para a estrutura correta
   
   // Redireciona para a URL real no Cloudinary
   res.redirect(imageUrl);
