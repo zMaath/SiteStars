@@ -3,9 +3,16 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Configuração do CORS
+app.use(cors());
+
+// Array para armazenar URLs das imagens (em produção, use um banco de dados)
+let imageUrls = [];
 
 // Configuração do Cloudinary
 cloudinary.config({
@@ -30,7 +37,14 @@ app.post('/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('Nenhuma imagem foi enviada.');
   }
-  res.json({ url: req.file.path }); // URL pública da imagem no Cloudinary
+  const imageUrl = req.file.path;
+  imageUrls.push(imageUrl); // Armazena a URL no array
+  res.json({ url: imageUrl }); // URL pública da imagem no Cloudinary
+});
+
+// Rota para listar todas as imagens enviadas
+app.get('/images', (req, res) => {
+  res.json(imageUrls); // Retorna o array de URLs
 });
 
 // Servir o HTML de upload

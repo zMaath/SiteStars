@@ -13,16 +13,34 @@
   </form>
   <div id="result"></div>
 
+  <h2>Imagens Enviadas</h2>
+  <div id="uploadedImages"></div>
+
   <script>
+    // Função para buscar e exibir imagens
+    async function fetchImages() {
+      const response = await fetch('/images');
+      const images = await response.json();
+      const imageContainer = document.getElementById('uploadedImages');
+      imageContainer.innerHTML = images
+        .map(url => `<img src="${url}" alt="Imagem carregada" width="200" />`)
+        .join('');
+    }
+
+    // Chamar fetchImages ao carregar a página
+    fetchImages();
+
+    // Enviar imagem e atualizar a lista de imagens
     document.getElementById('uploadForm').onsubmit = async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
-      const response = await fetch('https://site-stars.vercel.app/upload', { 
-  method: 'POST',
-  body: formData
-});
+      const response = await fetch('/upload', { 
+        method: 'POST',
+        body: formData
+      });
       const data = await response.json();
       document.getElementById('result').innerHTML = `<p>Imagem enviada! URL: <a href="${data.url}" target="_blank">${data.url}</a></p>`;
+      fetchImages(); // Atualiza a lista de imagens após o upload
     };
   </script>
 </body>
