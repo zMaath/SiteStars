@@ -1,46 +1,43 @@
 const express = require('express');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3000;
 
-// Verifique se a pasta uploads existe, se não, crie-a
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}
+// Configuração do Cloudinary
+cloudinary.config({
+  cloud_name: 'drxkjmcqx',
+  api_key: '835598171251887',
+  api_secret: 'Y9nEvGTwOb4WLfTzGx0MW2l9BIM',
+});
 
-// Configurar o armazenamento usando multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir); // Pasta onde as imagens serão salvas
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname)); // Nome único para cada imagem
+// Configuração do armazenamento usando o Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'uploads', // Pasta no Cloudinary onde as imagens serão salvas
+    allowed_formats: ['jpg', 'png', 'jpeg'],
   },
 });
+
 const upload = multer({ storage: storage });
-
-// Servir o arquivo HTML
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
 
 // Rota para upload de imagem
 app.post('/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('Nenhuma imagem foi enviada.');
   }
-  // Retornar a URL da imagem
-  res.json({ url: `/images/${req.file.filename}` });
+  res.json({ url: req.file.path }); // URL pública da imagem no Cloudinary
 });
 
-// Rota para acessar imagens
-app.use('/images', express.static(uploadDir));
+// Servir o HTML de upload
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+  console.log(`Servidor rodando na porta ${port}`);
 });
