@@ -22,7 +22,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'meus_links', // Certifique-se de que a pasta corresponde à que você está usando
+    folder: 'meus_links',
     allowed_formats: ['jpg', 'png', 'jpeg'],
   },
 });
@@ -35,7 +35,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     return res.status(400).send('Nenhuma imagem foi enviada.');
   }
   const imageUrl = req.file.path;
-  res.json({ url: imageUrl, public_id: req.file.filename }); // Retorna o public_id
+  res.json({ url: imageUrl, public_id: req.file.filename }); // Retorna a public_id
 });
 
 // Rota para servir o HTML de upload
