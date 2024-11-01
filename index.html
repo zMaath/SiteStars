@@ -49,7 +49,7 @@
   folder: 'meus_links'
 }, (error, result) => {
   if (!error && result && result.event === "success") {
-    const imageId = result.info.public_id.split('/').pop().substring(0, 6); // Obtém o ID da imagem
+    const imageId = result.info.public_id.split('/').pop() // Obtém o ID da imagem
     const desiredUrl = `https://site-stars.vercel.app/cards/${imageId}.png`;
 
     console.log('Imagem enviada com sucesso:', desiredUrl);
