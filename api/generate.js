@@ -7,7 +7,7 @@ const app = express();
 app.post('/api/generate', async (req, res) => {
   try {
     // Caminho da imagem do campo (substitua pelo caminho correto no seu servidor)
-    const fieldImagePath = path.join(__dirname, 'assets', 'campo.jpg');
+    const fieldImagePath = path.join(__dirname, 'images', 'campo.jpg');
     console.log(`Usando a imagem do campo em: ${fieldImagePath}`);
 
     // Carrega a imagem do campo
