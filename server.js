@@ -61,7 +61,6 @@ app.get('/cards/:id.png', async (req, res) => {
     res.status(404).send('Imagem não encontrada.');
   }
 });
-
 // Inicia o servidor
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
