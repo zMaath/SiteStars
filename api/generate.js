@@ -19,7 +19,7 @@ app.post('/api/generate', async (req, res) => {
     }
 
     // Carrega e redimensiona a imagem do campo
-    const fieldImage = await sharp(fieldImagePath).resize(1900, 2000).toBuffer();
+    const fieldImage = await sharp(fieldImagePath).resize(2300, 2400).toBuffer();
 
     // URLs das imagens dos jogadores
     const playerImages = [
