@@ -55,19 +55,14 @@
       folder: 'meus_links',
     }, (error, result) => {
       if (!error && result && result.event === "success") {
-        console.log('Imagem enviada com sucesso:', result.info.secure_url);
-        
-        // Gera um ID único para a URL personalizada
-        const uniqueId = getKey(6); // Gera um ID aleatório de 6 caracteres
-        
-        // Cria a URL personalizada
-        const customUrl = `https://site-stars.vercel.app/cards/${uniqueId}.png`;
+        // Gera um identificador único para a URL
+        const uniqueId = getKey(6); // Gera um ID único
+        const customUrl = `https://site-stars.vercel.app/cards/${uniqueId}.png`; // Cria a URL personalizada
 
-        // Atualiza o resultado na página
+        console.log('Imagem enviada com sucesso:', result.info.secure_url);
         document.getElementById('result').innerHTML = 
           `<p>Imagem enviada! URL: <a href="${customUrl}" target="_blank">${customUrl}</a></p>`;
-        
-        addImage(customUrl);
+        addImage(customUrl); // Adiciona a imagem usando a URL personalizada
       }
     });
 
