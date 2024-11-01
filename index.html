@@ -8,11 +8,29 @@
 </head>
 <body>
   <h1>Upload de Imagem</h1>
-  <button id="uploadWidget">Enviar Imagem</button>
+  
+  <!-- Campo de senha -->
+  <input type="password" id="accessPassword" placeholder="Digite a senha de acesso" />
+  <button id="accessButton">Entrar</button>
+  
+  <button id="uploadWidget" style="display: none;">Enviar Imagem</button>
   <div id="result"></div>
   <div id="uploadedImages"></div>
 
   <script>
+    const correctPassword = "futSTo05LdPqMTUIRSDQTfb04lk1p2"; // Defina a senha desejada
+
+    document.getElementById("accessButton").addEventListener("click", function() {
+      const enteredPassword = document.getElementById("accessPassword").value;
+      if (enteredPassword === correctPassword) {
+        document.getElementById("uploadWidget").style.display = "block";
+        document.getElementById("accessPassword").style.display = "none";
+        document.getElementById("accessButton").style.display = "none";
+      } else {
+        alert("Acesso bloqueado.");
+      }
+    });
+
     const getKey = (length) => {
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       let result = '';
@@ -24,19 +42,16 @@
 
     // Configurar o widget de upload do Cloudinary
     const uploadWidget = cloudinary.createUploadWidget({
-      cloudName: 'drxkjmcqx', // Substitua pelo seu nome de cloud do Cloudinary
+      cloudName: 'drxkjmcqx',
       uploadPreset: 'gogofafa',
       folder: 'meus_links',
-      public_id: getKey(6),
+      publid_id: getKey(6)
     }, (error, result) => {
       if (!error && result && result.event === "success") {
-        // Formata a URL para o formato desejado
-        const imageId = result.info.public_id.split('/').pop(); // Obtém o ID da imagem sem a pasta
-        const formattedUrl = `https://site-stars.vercel.app/cards/${imageId}.png`;
-
+        console.log('Imagem enviada com sucesso:', result.info.secure_url);
         document.getElementById('result').innerHTML = 
-          `<p>Imagem enviada! URL: <a href="${formattedUrl}" target="_blank">${formattedUrl}</a></p>`;
-        addImage(formattedUrl);
+          `<p>Imagem enviada! URL: <a href="${result.info.secure_url}" target="_blank">${result.info.secure_url}</a></p>`;
+        addImage(result.info.secure_url);
       }
     });
 
