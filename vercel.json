@@ -1,0 +1,5 @@
+{
+    "rewrites": [
+      { "source": "/cards/:id.png", "destination": "/api/image?id=:id" }
+    ]
+  }
