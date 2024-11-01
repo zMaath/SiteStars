@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload de Imagem</title>
-  
-  <!-- Link para o favicon -->
-  <link rel="icon" type="image/png" href="images/1299979378352062464.png" />
   <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
 </head>
 <body>
@@ -53,15 +50,13 @@
       cloudName: 'drxkjmcqx',
       uploadPreset: 'gogofafa',
       folder: 'meus_links',
+      publid_id: getKey(6)
     }, (error, result) => {
       if (!error && result && result.event === "success") {
-        const uniqueId = getKey(6); // Gera um ID único
-        const customUrl = `https://site-stars.vercel.app/api/image?id=${result.info.public_id}`; // Usa o ID público do Cloudinary
-
         console.log('Imagem enviada com sucesso:', result.info.secure_url);
         document.getElementById('result').innerHTML = 
-          `<p>Imagem enviada! URL: <a href="${customUrl}" target="_blank">${customUrl}</a></p>`;
-        addImage(customUrl); // Adiciona a imagem usando a URL personalizada
+          `<p>Imagem enviada! URL: <a href="${result.info.secure_url}" target="_blank">${result.info.secure_url}</a></p>`;
+        addImage(result.info.secure_url);
       }
     });
 
