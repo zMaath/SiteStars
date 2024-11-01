@@ -8,16 +8,25 @@ cloudinary.config({
 });
 
 module.exports = async (req, res) => {
-  const { id } = req.query; // Obtém o ID da imagem a partir da query
-  const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/meus_links/${id}.png`;
-
   try {
-    // Busca a imagem no Cloudinary
+    const { id } = req.query;
+
+    if (!id) {
+      return res.status(400).send("ID da imagem não foi fornecido.");
+    }
+
+    const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/meus_links/${id}.png`;
+
+    // Log para depuração
+    console.log(`Buscando imagem no URL: ${imageUrl}`);
+
     const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+
     res.setHeader('Content-Type', 'image/png');
     res.send(response.data);
+
   } catch (error) {
-    // Retorna o erro completo como resposta
-    res.status(404).send(`Imagem não encontrada. Detalhes do erro: ${error.message}. URL buscada: ${imageUrl}`);
+    console.error("Erro ao buscar a imagem:", error.message);
+    res.status(500).send(`Erro ao buscar imagem: ${error.message}`);
   }
 };
