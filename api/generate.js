@@ -4,20 +4,15 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 
-const app = express();
+const fieldImagePath = path.join(__dirname, '..', 'images', 'campo.jpg');
+
+if (!fs.existsSync(fieldImagePath)) {
+  console.error("Erro: A imagem do campo não foi encontrada no caminho especificado.");
+return res.status(404).send("Erro: A imagem do campo não foi encontrada.");
+}
 
 app.post('/api/generate', async (req, res) => {
   try {
-    // Caminho da imagem do campo
-    const fieldImagePath = path.join(__dirname, '..', 'images', 'campo.jpg');
-    console.log(`Tentando carregar a imagem do campo em: ${fieldImagePath}`);
-
-    // Verifica se o arquivo existe
-    if (!fs.existsSync(fieldImagePath)) {
-      console.error("Erro: A imagem do campo não foi encontrada no caminho especificado.");
-      return res.status(404).send("Erro: A imagem do campo não foi encontrada.");
-    }
-
     // Carrega e redimensiona a imagem do campo
     const fieldImage = await sharp(fieldImagePath).resize(3463, 3464).toBuffer();
 
@@ -32,7 +27,7 @@ app.post('/api/generate', async (req, res) => {
       playerImages.map(async (url) => {
         const response = await axios.get(url, { responseType: 'arraybuffer' });
         // Redimensiona a imagem do jogador para 300x400 pixels
-        return await sharp(response.data).resize(650, 750).toBuffer();
+        return await sharp(response.data).resize(850, 950).toBuffer();
       })
     );
 
@@ -40,17 +35,18 @@ app.post('/api/generate', async (req, res) => {
     let image = sharp(fieldImage);
 
     // Sobrepõe cada imagem de jogador na posição desejada
-    playerBuffers.forEach((playerBuffer, index) => {
-      // Defina a posição (x, y) para cada jogador, ajuste conforme necessário
-      const x = 100 + (index * 100); // Posição x de cada jogador
-      const y = 200; // Posição y comum para todos os jogadores
-      image = image.composite([{ input: playerBuffer, top: y, left: x }]);
-    });
+      const layers = []
+      playerBuffers.forEach((playerBuffer, index) => {
+      const x = 100 + (index * 100);
+      const y = 200;
+      layers.push({ input: playerBuffer, top: y, left: x })
+      });
+      image = image.composite(layers)
 
     // Redimensiona a imagem final se necessário
-    const outputBuffer = await image.png().toBuffer();
+    const outputBuffer = await image.webp().toBuffer();
     
-    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Type', 'image/webp');
     res.send(outputBuffer);
 
   } catch (error) {
