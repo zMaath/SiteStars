@@ -1,38 +1,28 @@
+const express = require('express');
 const sharp = require('sharp');
 const path = require('path');
-const axios = require('axios');
-const fs = require('fs').promises;
 
-module.exports = async (req, res) => {
+const app = express();
+
+app.post('/api/generate', async (req, res) => {
   try {
-    const { players } = req.body; // Expects an array of players with { url, x, y, width, height } 
+    // Caminho da imagem do campo (substitua pelo caminho correto no seu servidor)
+    const fieldImagePath = path.join(__dirname, 'assets', 'campo.jpg');
+    console.log(`Usando a imagem do campo em: ${fieldImagePath}`);
 
-    if (!players || players.length === 0) {
-      return res.status(400).send("Os dados dos jogadores são necessários.");
-    }
+    // Carrega a imagem do campo
+    const fieldImage = await sharp(fieldImagePath).resize(700, 800).toBuffer();
 
-    // Carregar imagem do campo como base
-    const fieldImage = await sharp(path.resolve(__dirname, 'images/campo.jpg'));
-
-    // Array para armazenar promessas de buffer de cada jogador
-    const playerBuffers = await Promise.all(players.map(async (player) => {
-      const response = await axios.get(player.url, { responseType: 'arraybuffer' });
-      return {
-        input: await sharp(response.data)
-          .resize(player.width, player.height)  // Redimensiona o jogador conforme necessário
-          .toBuffer(),
-        left: player.x,
-        top: player.y
-      };
-    }));
-
-    // Compor imagem do campo com todas as imagens de jogadores
-    const finalImage = await fieldImage.composite(playerBuffers).toBuffer();
-
+    // Retorna a imagem do campo como resposta
     res.setHeader('Content-Type', 'image/png');
-    res.send(finalImage);
+    res.send(fieldImage);
   } catch (error) {
-    console.error("Erro ao gerar a imagem:", error.message);
-    res.status(500).send(`Erro ao gerar a imagem: ${error.message}`);
+    console.error("Erro ao gerar imagem:", error.message);
+    res.status(500).send(`Erro ao gerar imagem: ${error.message}`);
   }
-};
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
