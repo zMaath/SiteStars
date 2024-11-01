@@ -1,72 +1,61 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Upload de Imagem</title>
-  <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar Imagem do Time</title>
 </head>
 <body>
-  <h1>Área de Acesso</h1>
-  
-  <input type="password" id="accessPassword" placeholder="Digite a senha de acesso" />
-  <button id="accessButton">Entrar</button>
+    <h1>Gerar Imagem do Time</h1>
 
-  <div id="uploadSection" style="display: none;">
-    <h1>Upload de Imagem</h1>
-    <button id="uploadWidget">Enviar Imagem</button>
-    <div id="result"></div>
-    <div id="uploadedImages"></div>
-  </div>
+    <button onclick="generateTeamImage()">Gerar Imagem</button>
+    <div id="generatedImageContainer">
+        <!-- A imagem gerada será exibida aqui -->
+    </div>
 
-  <script>
-    const correctPassword = "minhaSenhaSecreta";
+    <script>
+        async function generateTeamImage() {
+            const data = {
+                players: [
+                    { url: "https://site-stars.vercel.app/cards/yqhhxzhqlogpontjpoyb.png", x: 100, y: 150, width: 50, height: 50 },
+                    { url: "https://site-stars.vercel.app/cards/dtiuo6hxnvxsmq1mu9o9.png", x: 200, y: 250, width: 50, height: 50 }
+                    // Adicione mais jogadores conforme necessário
+                ]
+            };
 
-    document.getElementById("accessButton").addEventListener("click", function() {
-      const enteredPassword = document.getElementById("accessPassword").value;
-      if (enteredPassword === correctPassword) {
-        document.getElementById("uploadSection").style.display = "block";
-        document.getElementById("accessPassword").style.display = "none";
-        document.getElementById("accessButton").style.display = "none";
-      } else {
-        alert("Senha incorreta!");
-      }
-    });
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
 
-    const getKey = (length) => {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      let result = '';
-      for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-      }
-      return result;
-    };
+                if (!response.ok) {
+                    throw new Error(`Erro ao gerar imagem: ${response.statusText}`);
+                }
 
-    // Configurar o widget de upload do Cloudinary
-    const uploadWidget = cloudinary.createUploadWidget({
-  cloudName: 'drxkjmcqx',
-  uploadPreset: 'gogofafa',
-  folder: 'meus_links'
-}, (error, result) => {
-  if (!error && result && result.event === "success") {
-    const imageId = result.info.public_id.split('/').pop() // Obtém o ID da imagem
-    const desiredUrl = `https://site-stars.vercel.app/cards/${imageId}.png`;
+                const blob = await response.blob(); // Converte a resposta para um blob (imagem)
+                const imageUrl = URL.createObjectURL(blob); // Cria uma URL temporária para a imagem
 
-    console.log('Imagem enviada com sucesso:', desiredUrl);
-    document.getElementById('result').innerHTML = 
-      `<p>Imagem enviada! URL: <a href="${desiredUrl}" target="_blank">${desiredUrl}</a></p>`;
-    addImage(desiredUrl);
-  }
-});
+                // Exibe a imagem gerada na página
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = "Imagem do time gerada";
+                img.width = 700;
+                img.height = 800;
 
-    document.getElementById("uploadWidget").addEventListener("click", function() {
-      uploadWidget.open();
-    }, false);
+                const container = document.getElementById('generatedImageContainer');
+                container.innerHTML = ''; // Limpa imagens anteriores
+                container.appendChild(img); // Adiciona a nova imagem
 
-    function addImage(url) {
-      const imageContainer = document.getElementById('uploadedImages');
-      imageContainer.innerHTML += `<img src="${url}" alt="Imagem carregada" width="200" />`;
-    }
-  </script>
+            } catch (error) {
+                console.error(error);
+                alert('Ocorreu um erro ao gerar a imagem do time.');
+            }
+        }
+    </script>
 </body>
 </html>
