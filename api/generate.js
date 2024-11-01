@@ -19,7 +19,7 @@ app.post('/api/generate', async (req, res) => {
     }
 
     // Carrega e redimensiona a imagem do campo
-    const fieldImage = await sharp(fieldImagePath).resize(1100, 1200).toBuffer();
+    const fieldImage = await sharp(fieldImagePath).resize(1300, 1400).toBuffer();
 
     // URLs das imagens dos jogadores
     const playerImages = [
@@ -32,7 +32,7 @@ app.post('/api/generate', async (req, res) => {
       playerImages.map(async (url) => {
         const response = await axios.get(url, { responseType: 'arraybuffer' });
         // Redimensiona a imagem do jogador para 300x400 pixels
-        return await sharp(response.data).resize(150, 200).toBuffer();
+        return await sharp(response.data).resize(300, 400).toBuffer();
       })
     );
 
