@@ -36,13 +36,13 @@ app.post('/api/generate', async (req, res) => {
     let image = sharp(fieldImage);
 
     // Sobrepõe cada imagem de jogador na posição desejada
-      const layers = []
-      playerBuffers.forEach((playerBuffer, index) => {
-      const x = 100 + (index * 100);
-      const y = 200;
-      layers.push({ input: playerBuffer, top: y, left: x })
-      });
-      image = image.composite(layers)
+    const layers = playerBuffers.map((playerBuffer, index) => ({
+      input: playerBuffer,
+      top: 200,
+      left: 100 + (index * 100) // Ajuste de espaçamento horizontal
+    }));
+
+    image = image.composite(layers);
 
     // Redimensiona a imagem final se necessário
     const outputBuffer = await image.webp().toBuffer();
