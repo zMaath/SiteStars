@@ -15,7 +15,8 @@ module.exports = async (req, res) => {
       return res.status(400).send("ID da imagem não foi fornecido.");
     }
 
-    const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/meus_links/${id}.png`;
+    // URL da imagem com redimensionamento para 700x800
+    const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/w_700,h_800,c_fill/meus_links/${id}.png`;
 
     // Log para depuração
     console.log(`Buscando imagem no URL: ${imageUrl}`);
