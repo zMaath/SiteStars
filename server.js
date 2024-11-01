@@ -52,15 +52,14 @@ app.get('/', (req, res) => {
 app.get('/cards/:id.png', async (req, res) => {
   const { id } = req.params;
   const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/meus_links/${id}.png`;
-  console.log(`Buscando imagem no Cloudinary com URL: ${imageUrl}`);
 
   try {
-    // Faz a requisição à imagem do Cloudinary e retorna diretamente ao cliente
     const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
     res.setHeader('Content-Type', 'image/png');
     res.send(response.data);
   } catch (error) {
-    res.status(404).send('Imagem não encontrada.');
+    // Retorna o erro completo como resposta
+    res.status(404).send(`Imagem não encontrada. Detalhes do erro: ${error.message}. URL buscada: ${imageUrl}`);
   }
 });
 // Inicia o servidor
