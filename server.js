@@ -39,6 +39,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
   const public_id = req.file.filename;
   const imageUrl = `https://site-stars.vercel.app/cards/${public_id}.png`;
   
+  console.log(`URL formatada para exibição: ${imageUrl}`);
   res.json({ url: imageUrl, public_id });
 });
 
@@ -51,6 +52,7 @@ app.get('/', (req, res) => {
 app.get('/cards/:id.png', async (req, res) => {
   const { id } = req.params;
   const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/meus_links/${id}.png`;
+  console.log(`Buscando imagem no Cloudinary com URL: ${imageUrl}`);
 
   try {
     // Faz a requisição à imagem do Cloudinary e retorna diretamente ao cliente
