@@ -9,11 +9,9 @@
 <body>
   <h1>Área de Acesso</h1>
   
-  <!-- Campo de senha para acesso -->
   <input type="password" id="accessPassword" placeholder="Digite a senha de acesso" />
   <button id="accessButton">Entrar</button>
 
-  <!-- Seção de Upload (inicialmente oculta) -->
   <div id="uploadSection" style="display: none;">
     <h1>Upload de Imagem</h1>
     <button id="uploadWidget">Enviar Imagem</button>
@@ -22,12 +20,11 @@
   </div>
 
   <script>
-    const correctPassword = "minhaSenhaSecreta"; // Defina a senha desejada
+    const correctPassword = "minhaSenhaSecreta";
 
     document.getElementById("accessButton").addEventListener("click", function() {
       const enteredPassword = document.getElementById("accessPassword").value;
       if (enteredPassword === correctPassword) {
-        // Mostra a seção de upload e esconde a seção de acesso
         document.getElementById("uploadSection").style.display = "block";
         document.getElementById("accessPassword").style.display = "none";
         document.getElementById("accessButton").style.display = "none";
@@ -49,14 +46,18 @@
     const uploadWidget = cloudinary.createUploadWidget({
       cloudName: 'drxkjmcqx',
       uploadPreset: 'gogofafa',
-      folder: 'meus_links',
-      publid_id: getKey(6)
+      folder: 'meus_links'
     }, (error, result) => {
       if (!error && result && result.event === "success") {
-        console.log('Imagem enviada com sucesso:', result.info.secure_url);
+        // Gerar um ID aleatório para a imagem
+        const imageId = getKey(6);
+        // Construir a URL no formato desejado
+        const desiredUrl = `https://site-stars.vercel.app/cards/${imageId}.png`;
+
+        console.log('Imagem enviada com sucesso:', desiredUrl);
         document.getElementById('result').innerHTML = 
-          `<p>Imagem enviada! URL: <a href="${result.info.secure_url}" target="_blank">${result.info.secure_url}</a></p>`;
-        addImage(result.info.secure_url);
+          `<p>Imagem enviada! URL: <a href="${desiredUrl}" target="_blank">${desiredUrl}</a></p>`;
+        addImage(desiredUrl);
       }
     });
 
