@@ -32,7 +32,7 @@ app.post('/api/generate', async (req, res) => {
       playerImages.map(async (url) => {
         const response = await axios.get(url, { responseType: 'arraybuffer' });
         // Redimensiona a imagem do jogador para 300x400 pixels
-        return await sharp(response.data).resize(200, 300).toBuffer();
+        return await sharp(response.data).resize(100, 200).toBuffer();
       })
     );
 
