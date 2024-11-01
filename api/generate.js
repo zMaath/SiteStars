@@ -5,11 +5,12 @@ const fs = require('fs');
 const axios = require('axios');
 
 const fieldImagePath = path.join(__dirname, '..', 'images', 'campo.jpg');
-
+/*
 if (!fs.existsSync(fieldImagePath)) {
   console.error("Erro: A imagem do campo não foi encontrada no caminho especificado.");
 return res.status(404).send("Erro: A imagem do campo não foi encontrada.");
 }
+*/
 
 app.post('/api/generate', async (req, res) => {
   try {
