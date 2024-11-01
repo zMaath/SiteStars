@@ -1,55 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload de Imagem</title>
-    
-    <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload de Imagem</title>
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
 </head>
 <body>
-    <h1>Upload de Imagem</h1>
-    <button id="uploadWidget">Enviar Imagem</button>
-    <div id="result"></div>
-    <div id="uploadedImages"></div>
+  <h1>Upload de Imagem</h1>
+  <button id="uploadWidget">Enviar Imagem</button>
+  <div id="result"></div>
+  <div id="uploadedImages"></div>
 
-    <script>
-        const getKey = (length) => {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-            return result;
-        };
+  <script>
+    const getKey = (length) => {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      return result;
+    };
 
-        // Configurar o widget de upload do Cloudinary
-        const uploadWidget = cloudinary.createUploadWidget({
-            cloudName: 'drxkjmcqx', // Substitua pelo seu nome de cloud do Cloudinary
-            uploadPreset: 'gogofafa',
-            folder: 'meus_links',
-            public_id: getKey(6)
-        }, (error, result) => {
-            if (!error && result && result.event === "success") {
-                console.log('Imagem enviada com sucesso:', result.info.secure_url);
+    // Configurar o widget de upload do Cloudinary
+    const uploadWidget = cloudinary.createUploadWidget({
+      cloudName: 'drxkjmcqx', // Substitua pelo seu nome de cloud do Cloudinary
+      uploadPreset: 'gogofafa',
+      folder: 'meus_links',
+      public_id: getKey(6),
+    }, (error, result) => {
+      if (!error && result && result.event === "success") {
+        // Formata a URL para o formato desejado
+        const imageId = result.info.public_id.split('/').pop(); // Obtém o ID da imagem sem a pasta
+        const formattedUrl = `https://site-stars.vercel.app/cards/${imageId}.png`;
 
-                // Usar a ID da imagem como a URL personalizada
-                const cleanUrl = `https://site-stars.vercel.app/cards/${result.info.public_id}`; // Atualiza para o novo endpoint
+        document.getElementById('result').innerHTML = 
+          `<p>Imagem enviada! URL: <a href="${formattedUrl}" target="_blank">${formattedUrl}</a></p>`;
+        addImage(formattedUrl);
+      }
+    });
 
-                document.getElementById('result').innerHTML = 
-                    `<p>Imagem enviada! URL: <a href="${cleanUrl}" target="_blank">${cleanUrl}</a></p>`;
-                addImage(cleanUrl);
-            }
-        });
+    document.getElementById("uploadWidget").addEventListener("click", function() {
+      uploadWidget.open();
+    }, false);
 
-        document.getElementById("uploadWidget").addEventListener("click", function() {
-            uploadWidget.open();
-        }, false);
-
-        function addImage(url) {
-            const imageContainer = document.getElementById('uploadedImages');
-            imageContainer.innerHTML += `<img src="${url}" alt="Imagem carregada" width="200" />`;
-        }
-    </script>
+    function addImage(url) {
+      const imageContainer = document.getElementById('uploadedImages');
+      imageContainer.innerHTML += `<img src="${url}" alt="Imagem carregada" width="200" />`;
+    }
+  </script>
 </body>
 </html>
