@@ -44,22 +44,20 @@
 
     // Configurar o widget de upload do Cloudinary
     const uploadWidget = cloudinary.createUploadWidget({
-      cloudName: 'drxkjmcqx',
-      uploadPreset: 'gogofafa',
-      folder: 'meus_links'
-    }, (error, result) => {
-      if (!error && result && result.event === "success") {
-        // Gerar um ID aleatório para a imagem
-        const imageId = getKey(6);
-        // Construir a URL no formato desejado
-        const desiredUrl = `https://site-stars.vercel.app/cards/${imageId}.png`;
+  cloudName: 'drxkjmcqx',
+  uploadPreset: 'gogofafa',
+  folder: 'meus_links'
+}, (error, result) => {
+  if (!error && result && result.event === "success") {
+    const imageId = result.info.public_id.split('/').pop(); // Obtém o ID da imagem
+    const desiredUrl = `https://site-stars.vercel.app/cards/${imageId}.png`;
 
-        console.log('Imagem enviada com sucesso:', desiredUrl);
-        document.getElementById('result').innerHTML = 
-          `<p>Imagem enviada! URL: <a href="${desiredUrl}" target="_blank">${desiredUrl}</a></p>`;
-        addImage(desiredUrl);
-      }
-    });
+    console.log('Imagem enviada com sucesso:', desiredUrl);
+    document.getElementById('result').innerHTML = 
+      `<p>Imagem enviada! URL: <a href="${desiredUrl}" target="_blank">${desiredUrl}</a></p>`;
+    addImage(desiredUrl);
+  }
+});
 
     document.getElementById("uploadWidget").addEventListener("click", function() {
       uploadWidget.open();
