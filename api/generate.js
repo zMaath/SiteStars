@@ -3,7 +3,7 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
-
+const app = express()
 const fieldImagePath = path.join(__dirname, '..', 'images', 'campo.jpg');
 /*
 if (!fs.existsSync(fieldImagePath)) {
