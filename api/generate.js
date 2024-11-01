@@ -31,7 +31,8 @@ app.post('/api/generate', async (req, res) => {
     const playerBuffers = await Promise.all(
       playerImages.map(async (url) => {
         const response = await axios.get(url, { responseType: 'arraybuffer' });
-        return response.data;
+        // Redimensiona a imagem do jogador para 300x400 pixels
+        return await sharp(response.data).resize(300, 400).toBuffer();
       })
     );
 
@@ -46,8 +47,9 @@ app.post('/api/generate', async (req, res) => {
       image = image.composite([{ input: playerBuffer, top: y, left: x }]);
     });
 
-    // Finaliza a imagem e envia a resposta
+    // Redimensiona a imagem final se necessário
     const outputBuffer = await image.png().toBuffer();
+    
     res.setHeader('Content-Type', 'image/png');
     res.send(outputBuffer);
 
