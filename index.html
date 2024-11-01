@@ -55,9 +55,8 @@
       folder: 'meus_links',
     }, (error, result) => {
       if (!error && result && result.event === "success") {
-        // Gera um identificador único para a URL
         const uniqueId = getKey(6); // Gera um ID único
-        const customUrl = `https://site-stars.vercel.app/cards/${uniqueId}.png`; // Cria a URL personalizada
+        const customUrl = `https://site-stars.vercel.app/api/image?id=${result.info.public_id}`; // Usa o ID público do Cloudinary
 
         console.log('Imagem enviada com sucesso:', result.info.secure_url);
         document.getElementById('result').innerHTML = 
