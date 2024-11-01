@@ -34,8 +34,11 @@ app.post('/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('Nenhuma imagem foi enviada.');
   }
-  const imageUrl = req.file.path;
-  res.json({ url: imageUrl, public_id: req.file.filename }); // Retorna a public_id
+  
+  const public_id = req.file.filename; // Pega o nome do arquivo como public_id
+  const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/${public_id}.png`; // Cria a URL limpa
+  
+  res.json({ url: imageUrl, public_id }); // Retorna a URL limpa
 });
 
 // Rota para servir o HTML de upload
@@ -43,15 +46,11 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Rota para servir imagens personalizadas
-app.get('/image/:id', (req, res) => {
+// Nova rota para servir as imagens diretamente
+app.get('/cards/:id', (req, res) => {
   const { id } = req.params;
-
-  // Criar a URL correta para a imagem
-  const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/v1730417578/meus_links/${id}.png`; // Ajuste a URL para a estrutura correta
-  
-  // Redireciona para a URL real no Cloudinary
-  res.redirect(imageUrl);
+  const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/${id}.png`; // Ajusta a URL para o formato correto
+  res.redirect(imageUrl); // Redireciona para a URL da imagem
 });
 
 // Inicia o servidor

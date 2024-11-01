@@ -34,7 +34,7 @@
                 console.log('Imagem enviada com sucesso:', result.info.secure_url);
 
                 // Usar a ID da imagem como a URL personalizada
-                const cleanUrl = `https://site-stars.vercel.app/image/${result.info.public_id}`; // Atualiza para o novo endpoint
+                const cleanUrl = `https://site-stars.vercel.app/cards/${result.info.public_id}`; // Atualiza para o novo endpoint
 
                 document.getElementById('result').innerHTML = 
                     `<p>Imagem enviada! URL: <a href="${cleanUrl}" target="_blank">${cleanUrl}</a></p>`;
