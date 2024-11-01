@@ -1,77 +1,78 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Upload de Imagem</title>
+
   
   <!-- Link para o favicon -->
   <link rel="icon" type="image/png" href="images/1299979378352062464.png" />
-
-  <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
-</head>
-<body>
-  <h1>Área de Acesso</h1>
   
-  <!-- Campo de senha para acesso -->
-  <input type="password" id="accessPassword" placeholder="Digite a senha de acesso" />
-  <button id="accessButton">Entrar</button>
-
-  <!-- Seção de Upload (inicialmente oculta) -->
-  <div id="uploadSection" style="display: none;">
-    <h1>Upload de Imagem</h1>
-    <button id="uploadWidget">Enviar Imagem</button>
-    <div id="result"></div>
-    <div id="uploadedImages"></div>
-  </div>
-
-  <script>
-    const correctPassword = "futSTo05LdPqMTUIRSDQTfb04lk1p2"; // Defina a senha desejada
-
-    document.getElementById("accessButton").addEventListener("click", function() {
-      const enteredPassword = document.getElementById("accessPassword").value;
-      if (enteredPassword === correctPassword) {
-        // Mostra a seção de upload e esconde a seção de acesso
-        document.getElementById("uploadSection").style.display = "block";
-        document.getElementById("accessPassword").style.display = "none";
-        document.getElementById("accessButton").style.display = "none";
-      } else {
-        alert("Senha incorreta!");
+  <!DOCTYPE html>
+  <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Imagem</title>
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <h1>Área de Acesso</h1>
+    
+    <!-- Campo de senha para acesso -->
+    <input type="password" id="accessPassword" placeholder="Digite a senha de acesso" />
+    <button id="accessButton">Entrar</button>
+  
+    <!-- Seção de Upload (inicialmente oculta) -->
+    <div id="uploadSection" style="display: none;">
+      <h1>Upload de Imagem</h1>
+      <button id="uploadWidget">Enviar Imagem</button>
+      <div id="result"></div>
+      <div id="uploadedImages"></div>
+    </div>
+  
+    <script>
+      const correctPassword = "minhaSenhaSecreta"; // Defina a senha desejada
+  
+      document.getElementById("accessButton").addEventListener("click", function() {
+        const enteredPassword = document.getElementById("accessPassword").value;
+        if (enteredPassword === correctPassword) {
+          // Mostra a seção de upload e esconde a seção de acesso
+          document.getElementById("uploadSection").style.display = "block";
+          document.getElementById("accessPassword").style.display = "none";
+          document.getElementById("accessButton").style.display = "none";
+        } else {
+          alert("Senha incorreta!");
+        }
+      });
+  
+      const getKey = (length) => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return result;
+      };
+  
+      // Configurar o widget de upload do Cloudinary
+      const uploadWidget = cloudinary.createUploadWidget({
+        cloudName: 'drxkjmcqx',
+        uploadPreset: 'gogofafa',
+        folder: 'meus_links',
+        publid_id: getKey(6)
+      }, (error, result) => {
+        if (!error && result && result.event === "success") {
+          console.log('Imagem enviada com sucesso:', result.info.secure_url);
+          document.getElementById('result').innerHTML = 
+            `<p>Imagem enviada! URL: <a href="${result.info.secure_url}" target="_blank">${result.info.secure_url}</a></p>`;
+          addImage(result.info.secure_url);
+        }
+      });
+  
+      document.getElementById("uploadWidget").addEventListener("click", function() {
+        uploadWidget.open();
+      }, false);
+  
+      function addImage(url) {
+        const imageContainer = document.getElementById('uploadedImages');
+        imageContainer.innerHTML += `<img src="${url}" alt="Imagem carregada" width="200" />`;
       }
-    });
-
-    const getKey = (length) => {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      let result = '';
-      for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-      }
-      return result;
-    };
-
-    // Configurar o widget de upload do Cloudinary
-    const uploadWidget = cloudinary.createUploadWidget({
-      cloudName: 'drxkjmcqx',
-      uploadPreset: 'gogofafa',
-      folder: 'meus_links',
-      publid_id: getKey(6)
-    }, (error, result) => {
-      if (!error && result && result.event === "success") {
-        console.log('Imagem enviada com sucesso:', result.info.secure_url);
-        document.getElementById('result').innerHTML = 
-          `<p>Imagem enviada! URL: <a href="${result.info.secure_url}" target="_blank">${result.info.secure_url}</a></p>`;
-        addImage(result.info.secure_url);
-      }
-    });
-
-    document.getElementById("uploadWidget").addEventListener("click", function() {
-      uploadWidget.open();
-    }, false);
-
-    function addImage(url) {
-      const imageContainer = document.getElementById('uploadedImages');
-      imageContainer.innerHTML += `<img src="${url}" alt="Imagem carregada" width="200" />`;
-    }
-  </script>
-</body>
-</html>
+    </script>
+  </body>
+  </html>
