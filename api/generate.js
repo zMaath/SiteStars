@@ -59,7 +59,7 @@ app.get('/api/generate', async (req, res) => {
     if (gkBuffer) {
       layers.push({
         input: gkBuffer,
-        top: 6000, // Posição do goleiro na parte superior
+        top: 3300, // Posição do goleiro na parte superior
         left: 1300, // Centralizado horizontalmente no campo
       });
     }
