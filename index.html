@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -16,21 +15,17 @@
 
     <script>
         async function generateTeamImage() {
-            const data = {
-                players: [
-                    { url: "https://site-stars.vercel.app/cards/yqhhxzhqlogpontjpoyb.png", x: 100, y: 150, width: 50, height: 50 },
-                    { url: "https://site-stars.vercel.app/cards/dtiuo6hxnvxsmq1mu9o9.png", x: 200, y: 250, width: 50, height: 50 }
-                    // Adicione mais jogadores conforme necessário
-                ]
-            };
+            // Parâmetros para o campo e os jogadores
+            const campo = 'normal'; // Defina o campo desejado (ex.: "normal", "verao", etc.)
+            const jogador1 = 'yqhhxzhqlogpontjpoyb'; // Nome do arquivo sem extensão
+            const jogador2 = 'dtiuo6hxnvxsmq1mu9o9';
 
             try {
-                const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
+                // Constrói a URL da API com os parâmetros
+                const apiUrl = `https://site-stars.vercel.app/api/generate?campo=${campo}&jogador1=${jogador1}&jogador2=${jogador2}`;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
                 });
 
                 if (!response.ok) {
