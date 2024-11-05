@@ -9,13 +9,13 @@ const playersFolder = path.join(__dirname, '..', 'players');
 
 app.get('/api/generate', async (req, res) => {
   try {
-    const { campo = 'normal', jogador1, jogador2 } = req.query;
+    const { campo = 'normal', gk, ...queryParams } = req.query;
 
+    // Define o caminho da imagem do campo
     const fieldImagePath = (campo === 'normal') 
       ? path.join(fieldImagesFolder, 'campo.jpg') 
       : path.join(fieldImagesFolder, `${campo}.jpg`);
-    
-    // Log do caminho do campo para verificação
+
     console.log("Caminho da imagem do campo:", fieldImagePath);
 
     if (!fs.existsSync(fieldImagePath)) {
@@ -23,16 +23,28 @@ app.get('/api/generate', async (req, res) => {
       return res.status(404).send("Erro: Imagem do campo não encontrada.");
     }
 
+    // Carrega a imagem do campo
     const fieldImage = await sharp(fieldImagePath).resize(3463, 3464).toBuffer();
 
-    const playerImages = [jogador1, jogador2]
-      .map(jogador => path.join(playersFolder, `${jogador}.png`))
+    // Define o caminho do goleiro, se o ID `gk` for fornecido e não for "nenhum"
+    const gkImagePath = gk && gk !== 'nenhum' ? path.join(playersFolder, `${gk}.png`) : null;
+    const gkBuffer = gkImagePath && fs.existsSync(gkImagePath)
+      ? await sharp(gkImagePath).resize(850, 950).toBuffer()
+      : null;
+
+    // Obtém os IDs dos jogadores diretamente dos parâmetros da query string
+    const playerIds = Object.values(queryParams).filter(id => id !== 'nenhum');
+    
+    // Cria os caminhos para os jogadores
+    const playerImages = playerIds
+      .map(id => path.join(playersFolder, `${id}.png`))
       .filter(filePath => fs.existsSync(filePath));
 
-    if (playerImages.length < 2) {
-      return res.status(404).send("Erro: Uma ou mais imagens de jogadores não foram encontradas.");
+    if (gkBuffer === null && playerImages.length === 0) {
+      return res.status(404).send("Erro: Nenhuma imagem válida de goleiro ou jogador foi fornecida.");
     }
 
+    // Carrega as imagens dos jogadores
     const playerBuffers = await Promise.all(
       playerImages.map(async (imagePath) => {
         return await sharp(imagePath).resize(850, 950).toBuffer();
@@ -40,12 +52,27 @@ app.get('/api/generate', async (req, res) => {
     );
 
     let image = sharp(fieldImage);
-    const layers = playerBuffers.map((buffer, index) => ({
-      input: buffer,
-      top: 200,
-      left: 100 + (index * 100),
-    }));
+    
+    // Define a posição do goleiro
+    const layers = [];
+    if (gkBuffer) {
+      layers.push({
+        input: gkBuffer,
+        top: 50, // Posição do goleiro na parte superior
+        left: 1600, // Centralizado horizontalmente no campo
+      });
+    }
 
+    // Posiciona cada jogador na imagem final
+    playerBuffers.forEach((buffer, index) => {
+      layers.push({
+        input: buffer,
+        top: 200, // Ajuste vertical para jogadores de linha
+        left: 100 + (index * 100), // Ajuste de espaçamento horizontal
+      });
+    });
+
+    // Compositar as camadas
     image = image.composite(layers);
 
     const outputBuffer = await image.webp().toBuffer();
