@@ -9,7 +9,7 @@ const playersFolder = path.join(__dirname, '..', 'players');
 
 app.get('/api/generate', async (req, res) => {
   try {
-    const { campo = 'normal', gk, ...queryParams } = req.query;
+    const { campo = 'normal', gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10 } = req.query;
 
     // Define o caminho da imagem do campo
     const fieldImagePath = (campo === 'normal') 
@@ -32,9 +32,10 @@ app.get('/api/generate', async (req, res) => {
       ? await sharp(gkImagePath).resize(850, 950).toBuffer()
       : null;
 
-    // Obtém os IDs dos jogadores diretamente dos parâmetros da query string
-    const playerIds = Object.values(queryParams).filter(id => id !== 'nenhum');
-    
+    // Coleta as imagens dos jogadores especificados como `jogador1`, `jogador2`, etc.
+    const playerIds = [jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10]
+      .filter(id => id && id !== 'nenhum'); // Remove valores "nenhum" ou não fornecidos
+
     // Cria os caminhos para os jogadores
     const playerImages = playerIds
       .map(id => path.join(playersFolder, `${id}.png`))
@@ -58,7 +59,7 @@ app.get('/api/generate', async (req, res) => {
     if (gkBuffer) {
       layers.push({
         input: gkBuffer,
-        top: 1000, // Posição do goleiro na parte superior
+        top: 3000, // Posição do goleiro na parte superior
         left: 1300, // Centralizado horizontalmente no campo
       });
     }
