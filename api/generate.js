@@ -2,51 +2,57 @@ const express = require('express');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
-const axios = require('axios');
-const app = express()
-const fieldImagePath = path.join(__dirname, '..', 'images', 'campo.jpg');
-/*
-if (!fs.existsSync(fieldImagePath)) {
-  console.error("Erro: A imagem do campo não foi encontrada no caminho especificado.");
-return res.status(404).send("Erro: A imagem do campo não foi encontrada.");
-}
-*/
+const app = express();
 
-app.post('/api/generate', async (req, res) => {
+// Define a pasta de imagens de campo e jogadores
+const fieldImagesFolder = path.join(__dirname, 'images');
+const playersFolder = path.join(__dirname, 'players');
+
+app.get('/api/generate', async (req, res) => {
   try {
+    const { campo = 'normal', jogador1, jogador2 } = req.query;
+
+    // Define o caminho para a imagem do campo com base no tipo
+    const fieldImagePath = (campo === 'normal') 
+      ? path.join(fieldImagesFolder, 'campo.jpg') 
+      : path.join(fieldImagesFolder, `${campo}.jpg`);
+    
+    // Verifica se a imagem do campo existe
+    if (!fs.existsSync(fieldImagePath)) {
+      return res.status(404).send("Erro: Imagem do campo não encontrada.");
+    }
+
     // Carrega e redimensiona a imagem do campo
     const fieldImage = await sharp(fieldImagePath).resize(3463, 3464).toBuffer();
 
-    // URLs das imagens dos jogadores
-    const playerImages = [
-      "https://site-stars.vercel.app/cards/yqhhxzhqlogpontjpoyb.png",
-      "https://site-stars.vercel.app/cards/dtiuo6hxnvxsmq1mu9o9.png"
-    ];
+    // Define os caminhos das imagens dos jogadores na pasta "players"
+    const playerImages = [jogador1, jogador2]
+      .map(jogador => path.join(playersFolder, `${jogador}.png`))
+      .filter(fs.existsSync); // Filtra para apenas arquivos que existam
 
-    // Carrega e sobrepõe as imagens dos jogadores
+    if (playerImages.length === 0) {
+      return res.status(400).send("Erro: Imagens dos jogadores não encontradas.");
+    }
+
+    // Carrega e redimensiona as imagens dos jogadores
     const playerBuffers = await Promise.all(
-      playerImages.map(async (url) => {
-        const response = await axios.get(url, { responseType: 'arraybuffer' });
-        // Redimensiona a imagem do jogador para 300x400 pixels
-        return await sharp(response.data).resize(850, 950).toBuffer();
+      playerImages.map(async (imagePath) => {
+        return await sharp(imagePath).resize(850, 950).toBuffer();
       })
     );
 
-    // Cria a imagem final
+    // Composição da imagem final
     let image = sharp(fieldImage);
-
-    // Sobrepõe cada imagem de jogador na posição desejada
-    const layers = playerBuffers.map((playerBuffer, index) => ({
-      input: playerBuffer,
+    const layers = playerBuffers.map((buffer, index) => ({
+      input: buffer,
       top: 200,
-      left: 100 + (index * 100) // Ajuste de espaçamento horizontal
+      left: 100 + (index * 100), // Ajuste de espaçamento
     }));
 
     image = image.composite(layers);
 
-    // Redimensiona a imagem final se necessário
+    // Exporta a imagem final em formato webp
     const outputBuffer = await image.webp().toBuffer();
-    
     res.setHeader('Content-Type', 'image/webp');
     res.send(outputBuffer);
 
