@@ -4,8 +4,8 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 
-const fieldImagesFolder = path.join(__dirname, 'images');
-const playersFolder = path.join(__dirname, 'players');
+const fieldImagesFolder = path.join(__dirname, '..', 'images');
+const playersFolder = path.join(__dirname, '..', 'players');
 
 app.get('/api/generate', async (req, res) => {
   try {
@@ -15,7 +15,11 @@ app.get('/api/generate', async (req, res) => {
       ? path.join(fieldImagesFolder, 'campo.jpg') 
       : path.join(fieldImagesFolder, `${campo}.jpg`);
     
+    // Log do caminho do campo para verificação
+    console.log("Caminho da imagem do campo:", fieldImagePath);
+
     if (!fs.existsSync(fieldImagePath)) {
+      console.error("Erro: Imagem do campo não encontrada no caminho:", fieldImagePath);
       return res.status(404).send("Erro: Imagem do campo não encontrada.");
     }
 
