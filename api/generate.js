@@ -49,6 +49,7 @@ app.get('/api/generate', async (req, res) => {
 
     // Configura as posições
     const layers = [];
+    let image = sharp(fieldBuffer);
 
     // Adiciona o goleiro, se presente
     if (gkBuffer) {
@@ -82,14 +83,11 @@ app.get('/api/generate', async (req, res) => {
     });
 
     // Composita as camadas no campo
-    const image = await sharp(fieldBuffer)
-      .composite(layers)
-      .webp({ quality: 95 }) // Define a qualidade para reduzir o tamanho do buffer
-      .toBuffer();
+    image = image.composite(layers);
 
-    // Envia a imagem final como resposta
+    const outputBuffer = await image.webp().toBuffer();
     res.setHeader('Content-Type', 'image/webp');
-    res.send(image);
+    res.send(outputBuffer);
 
   } catch (error) {
     console.error("Erro ao gerar a imagem:", error.message);
