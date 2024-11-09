@@ -11,6 +11,7 @@ app.get('/api/generate', async (req, res) => {
   try {
     const { campo = 'normal', gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10 } = req.query;
 
+    // Defina o caminho da imagem do campo e verifique se existe
     const fieldImagePath = (campo === 'normal') 
       ? path.join(fieldImagesFolder, 'campo.png') 
       : path.join(fieldImagesFolder, `${campo}.png`);
@@ -20,46 +21,41 @@ app.get('/api/generate', async (req, res) => {
       return res.status(404).send("Erro: Imagem do campo não encontrada.");
     }
 
-    let fieldImage = sharp(fieldImagePath);
-    const fieldMetadata = await fieldImage.metadata();
-    if (fieldMetadata.width !== 1062 || fieldMetadata.height !== 1069) {
-      fieldImage = fieldImage.resize(1062, 1069);
-    }
-    const fieldBuffer = await fieldImage.toBuffer();
-
-    const gkImagePath = gk && gk !== 'nenhum' ? path.join(playersFolder, `${gk}.png`) : null;
-    const gkBuffer = gkImagePath && fs.existsSync(gkImagePath)
-      ? await sharp(gkImagePath).resize(225, 240).toBuffer()
-      : null;
-
+    // Prepara as IDs dos jogadores e exclui valores inválidos
     const playerIds = [jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10]
       .filter(id => id && id !== 'nenhum');
     
-    const playerImages = playerIds
-      .map(id => path.join(playersFolder, `${id}.png`))
-      .filter(filePath => fs.existsSync(filePath));
+    // Carrega as imagens do campo e dos jogadores em paralelo
+    const [fieldBuffer, gkBuffer, playerBuffers] = await Promise.all([
+      sharp(fieldImagePath)
+        .resize(1062, 1069) // Garante o tamanho correto da imagem do campo
+        .toBuffer(),
 
-    if (gkBuffer === null && playerImages.length === 0) {
+      gk && gk !== 'nenhum' 
+        ? sharp(path.join(playersFolder, `${gk}.png`)).resize(225, 240).toBuffer()
+        : Promise.resolve(null),
+
+      Promise.all(
+        playerIds.map(async id => {
+          const imagePath = path.join(playersFolder, `${id}.png`);
+          return fs.existsSync(imagePath) ? sharp(imagePath).resize(225, 240).toBuffer() : null;
+        })
+      )
+    ]);
+
+    if (!gkBuffer && playerBuffers.every(buffer => buffer === null)) {
       return res.status(404).send("Erro: Nenhuma imagem válida de goleiro ou jogador foi fornecida.");
     }
 
-    const playerBuffers = await Promise.all(
-      playerImages.map(async (imagePath) => {
-        return sharp(imagePath).resize(225, 240).toBuffer();
-      })
-    );
-
-    let image = sharp(fieldBuffer);  
+    // Configura as posições
     const layers = [];
 
+    // Adiciona o goleiro, se presente
     if (gkBuffer) {
-      layers.push({
-        input: gkBuffer,
-        top: 791,
-        left: 423,
-      });
+      layers.push({ input: gkBuffer, top: 791, left: 423 });
     }
 
+    // Configurações de posição para os jogadores
     const playerPositions = [
       { top: 696, left: 223 }, // ZAG
       { top: 699, left: 615 }, // ZAG
@@ -68,14 +64,15 @@ app.get('/api/generate', async (req, res) => {
       { top: 479, left: 420 }, // VOL
       { top: 321, left: 250 }, // MEI
       { top: 384, left: 615 }, // MC
-      { top: 162, left: 83 }, // PE
+      { top: 162, left: 83 },  // PE
       { top: 168, left: 749 }, // PD
-      { top: 106, left: 418 },  // CA
+      { top: 106, left: 418 }, // CA
     ];
 
+    // Adiciona as imagens dos jogadores nas camadas
     playerBuffers.forEach((buffer, index) => {
-      const position = playerPositions[index];
-      if (position) {
+      if (buffer) {
+        const position = playerPositions[index];
         layers.push({
           input: buffer,
           top: position.top,
@@ -84,11 +81,15 @@ app.get('/api/generate', async (req, res) => {
       }
     });
 
-    image = image.composite(layers);
+    // Composita as camadas no campo
+    const image = await sharp(fieldBuffer)
+      .composite(layers)
+      .webp({ quality: 80 }) // Define a qualidade para reduzir o tamanho do buffer
+      .toBuffer();
 
-    const outputBuffer = await image.webp().toBuffer();
+    // Envia a imagem final como resposta
     res.setHeader('Content-Type', 'image/webp');
-    res.send(outputBuffer);
+    res.send(image);
 
   } catch (error) {
     console.error("Erro ao gerar a imagem:", error.message);
