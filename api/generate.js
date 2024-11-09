@@ -84,7 +84,7 @@ app.get('/api/generate', async (req, res) => {
     // Composita as camadas no campo
     const image = await sharp(fieldBuffer)
       .composite(layers)
-      .webp({ quality: 80 }) // Define a qualidade para reduzir o tamanho do buffer
+      .webp({ quality: 120 }) // Define a qualidade para reduzir o tamanho do buffer
       .toBuffer();
 
     // Envia a imagem final como resposta
