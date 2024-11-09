@@ -11,32 +11,30 @@ app.get('/api/generate', async (req, res) => {
   try {
     const { campo = 'normal', gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10 } = req.query;
 
-    // Define o caminho da imagem do campo
     const fieldImagePath = (campo === 'normal') 
-      ? path.join(fieldImagesFolder, 'campo.jpg') 
-      : path.join(fieldImagesFolder, `${campo}.jpg`);
-
-    console.log("Caminho da imagem do campo:", fieldImagePath);
+      ? path.join(fieldImagesFolder, 'campo.png') 
+      : path.join(fieldImagesFolder, `${campo}.png`);
 
     if (!fs.existsSync(fieldImagePath)) {
       console.error("Erro: Imagem do campo não encontrada no caminho:", fieldImagePath);
       return res.status(404).send("Erro: Imagem do campo não encontrada.");
     }
 
-    // Carrega a imagem do campo
-    const fieldImage = await sharp(fieldImagePath).resize(3463, 3464).toBuffer();
+    let fieldImage = sharp(fieldImagePath);
+    const fieldMetadata = await fieldImage.metadata();
+    if (fieldMetadata.width !== 1062 || fieldMetadata.height !== 1069) {
+      fieldImage = fieldImage.resize(1062, 1069);
+    }
+    const fieldBuffer = await fieldImage.toBuffer();
 
-    // Define o caminho do goleiro, se o ID `gk` for fornecido e não for "nenhum"
     const gkImagePath = gk && gk !== 'nenhum' ? path.join(playersFolder, `${gk}.png`) : null;
     const gkBuffer = gkImagePath && fs.existsSync(gkImagePath)
-      ? await sharp(gkImagePath).resize(850, 950).toBuffer()
+      ? await sharp(gkImagePath).resize(225, 240).toBuffer()
       : null;
 
-    // Coleta as imagens dos jogadores especificados como `jogador1`, `jogador2`, etc.
     const playerIds = [jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10]
-      .filter(id => id && id !== 'nenhum'); // Remove valores "nenhum" ou não fornecidos
-
-    // Cria os caminhos para os jogadores
+      .filter(id => id && id !== 'nenhum');
+    
     const playerImages = playerIds
       .map(id => path.join(playersFolder, `${id}.png`))
       .filter(filePath => fs.existsSync(filePath));
@@ -45,35 +43,47 @@ app.get('/api/generate', async (req, res) => {
       return res.status(404).send("Erro: Nenhuma imagem válida de goleiro ou jogador foi fornecida.");
     }
 
-    // Carrega as imagens dos jogadores
     const playerBuffers = await Promise.all(
       playerImages.map(async (imagePath) => {
-        return await sharp(imagePath).resize(850, 950).toBuffer();
+        return sharp(imagePath).resize(225, 240).toBuffer();
       })
     );
 
-    let image = sharp(fieldImage);
-    
-    // Define a posição do goleiro
+    let image = sharp(fieldBuffer);  
     const layers = [];
+
     if (gkBuffer) {
       layers.push({
         input: gkBuffer,
-        top: 3150, // Posição do goleiro na parte superior
-        left: 1300, // Centralizado horizontalmente no campo
+        top: 791,
+        left: 423,
       });
     }
 
-    // Posiciona cada jogador na imagem final
+    const playerPositions = [
+      { top: 696, left: 223 }, // ZAG
+      { top: 699, left: 615 }, // ZAG
+      { top: 572, left: 19 },  // LE
+      { top: 572, left: 822 }, // LD
+      { top: 479, left: 420 }, // VOL
+      { top: 321, left: 250 }, // MEI
+      { top: 384, left: 615 }, // MC
+      { top: 162, left: 83 }, // PE
+      { top: 168, left: 749 }, // PD
+      { top: 106, left: 418 },  // CA
+    ];
+
     playerBuffers.forEach((buffer, index) => {
-      layers.push({
-        input: buffer,
-        top: 200, // Ajuste vertical para jogadores de linha
-        left: 100 + (index * 100), // Ajuste de espaçamento horizontal
-      });
+      const position = playerPositions[index];
+      if (position) {
+        layers.push({
+          input: buffer,
+          top: position.top,
+          left: position.left,
+        });
+      }
     });
 
-    // Compositar as camadas
     image = image.composite(layers);
 
     const outputBuffer = await image.webp().toBuffer();
