@@ -7,63 +7,73 @@ const app = express();
 const fieldImagesFolder = path.join(__dirname, '..', 'images');
 const playersFolder = path.join(__dirname, '..', 'players');
 
-const cache = new Map(); // Cache para imagens redimensionadas
+const cache = new Map(); // Cache for resized images
 
 app.get('/api/generate', async (req, res) => {
   try {
     const { campo = 'normal', gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10 } = req.query;
 
-    // Caminho da imagem do campo
-    const fieldImagePath = (campo === 'normal') 
+    // Field Image Path
+    const fieldImagePath = campo === 'normal' 
       ? path.join(fieldImagesFolder, 'campo.png') 
       : path.join(fieldImagesFolder, `${campo}.png`);
 
     if (!fs.existsSync(fieldImagePath)) {
-      return res.status(404).send("Erro: Imagem do campo não encontrada.");
+      return res.status(404).send("Error: Field image not found.");
     }
 
-    // Carrega a imagem do campo apenas uma vez
-    const fieldBuffer = await sharp(fieldImagePath).resize(1062, 1069).toBuffer();
+    // Load and cache the field image only once
+    let fieldBuffer = cache.get(`field_${campo}`);
+    if (!fieldBuffer) {
+      fieldBuffer = await sharp(fieldImagePath).resize(1062, 1069).toBuffer();
+      cache.set(`field_${campo}`, fieldBuffer);
+    }
 
+    // Player positions
     const playerIds = [gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10];
     const playerPositions = [
-      { top: 791, left: 423 }, // GK
-      { top: 696, left: 223 }, { top: 699, left: 615 }, // ZAG
-      { top: 572, left: 19 }, { top: 572, left: 822 },  // LE, LD
-      { top: 479, left: 420 }, // VOL
-      { top: 321, left: 250 }, { top: 384, left: 615 }, // MEI, MC
-      { top: 162, left: 83 }, { top: 168, left: 749 },  // PE, PD
-      { top: 106, left: 418 }  // CA
+      { top: 791, left: 423 }, { top: 696, left: 223 }, { top: 699, left: 615 },
+      { top: 572, left: 19 }, { top: 572, left: 822 }, { top: 479, left: 420 },
+      { top: 321, left: 250 }, { top: 384, left: 615 }, { top: 162, left: 83 },
+      { top: 168, left: 749 }, { top: 106, left: 418 }
     ];
 
-    const layers = [];
-    for (let i = 0; i < playerIds.length; i++) {
-      const id = playerIds[i];
-      if (!id || id === 'nenhum') continue;
+    // Prepare the layers
+    const layers = await Promise.all(playerIds.map(async (id, index) => {
+      if (!id || id === 'nenhum') return null;
 
       const imagePath = path.join(playersFolder, `${id}.png`);
-      if (!fs.existsSync(imagePath)) continue;
+      if (!fs.existsSync(imagePath)) return null;
 
+      // Check cache for the resized buffer
       let buffer = cache.get(id);
       if (!buffer) {
         buffer = await sharp(imagePath).resize(225, 240).toBuffer();
-        cache.set(id, buffer); // Armazena na cache
+        cache.set(id, buffer);
       }
 
-      layers.push({ input: buffer, top: playerPositions[i].top, left: playerPositions[i].left });
-    }
+      return { input: buffer, top: playerPositions[index].top, left: playerPositions[index].left };
+    }));
 
-    const image = await sharp(fieldBuffer).composite(layers).webp().toBuffer();
+    // Filter out any null values from the layers array
+    const validLayers = layers.filter(layer => layer);
+
+    // Generate the final image with improved quality
+    const image = await sharp(fieldBuffer)
+      .composite(validLayers)
+      .webp({ quality: 90 }) // Adjust quality for better compression without loss
+      .toBuffer();
+
     res.setHeader('Content-Type', 'image/webp');
     res.send(image);
 
   } catch (error) {
-    console.error("Erro ao gerar a imagem:", error.message);
-    res.status(500).send(`Erro ao gerar a imagem: ${error.message}`);
+    console.error("Error generating image:", error.message);
+    res.status(500).send(`Error generating image: ${error.message}`);
   }
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
