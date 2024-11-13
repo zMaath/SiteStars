@@ -7,87 +7,55 @@ const app = express();
 const fieldImagesFolder = path.join(__dirname, '..', 'images');
 const playersFolder = path.join(__dirname, '..', 'players');
 
+const cache = new Map(); // Cache para imagens redimensionadas
+
 app.get('/api/generate', async (req, res) => {
   try {
     const { campo = 'normal', gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10 } = req.query;
 
-    // Defina o caminho da imagem do campo e verifique se existe
+    // Caminho da imagem do campo
     const fieldImagePath = (campo === 'normal') 
       ? path.join(fieldImagesFolder, 'campo.png') 
       : path.join(fieldImagesFolder, `${campo}.png`);
 
     if (!fs.existsSync(fieldImagePath)) {
-      console.error("Erro: Imagem do campo não encontrada no caminho:", fieldImagePath);
       return res.status(404).send("Erro: Imagem do campo não encontrada.");
     }
 
-    // Prepara as IDs dos jogadores e exclui valores inválidos
-    const playerIds = [jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10]
-      .filter(id => id && id !== 'nenhum');
-    
-    // Carrega as imagens do campo e dos jogadores em paralelo
-    const [fieldBuffer, gkBuffer, playerBuffers] = await Promise.all([
-      sharp(fieldImagePath)
-        .resize(1062, 1069) // Garante o tamanho correto da imagem do campo
-        .toBuffer(),
+    // Carrega a imagem do campo apenas uma vez
+    const fieldBuffer = await sharp(fieldImagePath).resize(1062, 1069).toBuffer();
 
-      gk && gk !== 'nenhum' 
-        ? sharp(path.join(playersFolder, `${gk}.png`)).resize(225, 240).toBuffer()
-        : Promise.resolve(null),
-
-      Promise.all(
-        playerIds.map(async id => {
-          const imagePath = path.join(playersFolder, `${id}.png`);
-          return fs.existsSync(imagePath) ? sharp(imagePath).resize(225, 240).toBuffer() : null;
-        })
-      )
-    ]);
-
-    if (!gkBuffer && playerBuffers.every(buffer => buffer === null)) {
-      return res.status(404).send("Erro: Nenhuma imagem válida de goleiro ou jogador foi fornecida.");
-    }
-
-    // Configura as posições
-    const layers = [];
-    let image = sharp(fieldBuffer);
-
-    // Adiciona o goleiro, se presente
-    if (gkBuffer) {
-      layers.push({ input: gkBuffer, top: 791, left: 423 });
-    }
-
-    // Configurações de posição para os jogadores
+    const playerIds = [gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10];
     const playerPositions = [
-      { top: 696, left: 223 }, // ZAG
-      { top: 699, left: 615 }, // ZAG
-      { top: 572, left: 19 },  // LE
-      { top: 572, left: 822 }, // LD
+      { top: 791, left: 423 }, // GK
+      { top: 696, left: 223 }, { top: 699, left: 615 }, // ZAG
+      { top: 572, left: 19 }, { top: 572, left: 822 },  // LE, LD
       { top: 479, left: 420 }, // VOL
-      { top: 321, left: 250 }, // MEI
-      { top: 384, left: 615 }, // MC
-      { top: 162, left: 83 },  // PE
-      { top: 168, left: 749 }, // PD
-      { top: 106, left: 418 }, // CA
+      { top: 321, left: 250 }, { top: 384, left: 615 }, // MEI, MC
+      { top: 162, left: 83 }, { top: 168, left: 749 },  // PE, PD
+      { top: 106, left: 418 }  // CA
     ];
 
-    // Adiciona as imagens dos jogadores nas camadas
-    playerBuffers.forEach((buffer, index) => {
-      if (buffer) {
-        const position = playerPositions[index];
-        layers.push({
-          input: buffer,
-          top: position.top,
-          left: position.left,
-        });
+    const layers = [];
+    for (let i = 0; i < playerIds.length; i++) {
+      const id = playerIds[i];
+      if (!id || id === 'nenhum') continue;
+
+      const imagePath = path.join(playersFolder, `${id}.png`);
+      if (!fs.existsSync(imagePath)) continue;
+
+      let buffer = cache.get(id);
+      if (!buffer) {
+        buffer = await sharp(imagePath).resize(225, 240).toBuffer();
+        cache.set(id, buffer); // Armazena na cache
       }
-    });
 
-    // Composita as camadas no campo
-    image = image.composite(layers);
+      layers.push({ input: buffer, top: playerPositions[i].top, left: playerPositions[i].left });
+    }
 
-    const outputBuffer = await image.webp().toBuffer();
+    const image = await sharp(fieldBuffer).composite(layers).webp().toBuffer();
     res.setHeader('Content-Type', 'image/webp');
-    res.send(outputBuffer);
+    res.send(image);
 
   } catch (error) {
     console.error("Erro ao gerar a imagem:", error.message);
