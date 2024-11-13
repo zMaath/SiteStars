@@ -6,24 +6,30 @@ const app = express();
 
 const fieldImagesFolder = path.join(__dirname, '..', 'images');
 const playersFolder = path.join(__dirname, '..', 'players');
-const cache = new Map();
+
+const cache = new Map(); // Cache for resized images
 
 app.get('/api/generate', async (req, res) => {
   try {
     const { campo = 'normal', gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10 } = req.query;
 
-    const fieldImagePath = path.join(fieldImagesFolder, `${campo}.png`);
+    // Field Image Path
+    const fieldImagePath = campo === 'normal' 
+      ? path.join(fieldImagesFolder, 'campo.png') 
+      : path.join(fieldImagesFolder, `${campo}.png`);
+
     if (!fs.existsSync(fieldImagePath)) {
       return res.status(404).send("Error: Field image not found.");
     }
 
-    // Check if field image is cached; resize only if needed
-    const fieldBuffer = cache.get(`field_${campo}`) || await sharp(fieldImagePath)
-      .resize(1062, 1069)
-      .toBuffer();
-    cache.set(`field_${campo}`, fieldBuffer); // Cache the resized field image
+    // Load and cache the field image only once
+    let fieldBuffer = cache.get(`field_${campo}`);
+    if (!fieldBuffer) {
+      fieldBuffer = await sharp(fieldImagePath).resize(1062, 1069).toBuffer();
+      cache.set(`field_${campo}`, fieldBuffer);
+    }
 
-    // Array of player IDs and positions
+    // Player positions
     const playerIds = [gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10];
     const playerPositions = [
       { top: 791, left: 423 }, { top: 696, left: 223 }, { top: 699, left: 615 },
@@ -32,29 +38,30 @@ app.get('/api/generate', async (req, res) => {
       { top: 168, left: 749 }, { top: 106, left: 418 }
     ];
 
-    // Process player images in parallel and cache them
+    // Prepare the layers
     const layers = await Promise.all(playerIds.map(async (id, index) => {
       if (!id || id === 'nenhum') return null;
-
-      const cachedBuffer = cache.get(id);
-      if (cachedBuffer) {
-        return { input: cachedBuffer, top: playerPositions[index].top, left: playerPositions[index].left };
-      }
 
       const imagePath = path.join(playersFolder, `${id}.png`);
       if (!fs.existsSync(imagePath)) return null;
 
-      const buffer = await sharp(imagePath).resize(225, 240).toBuffer();
-      cache.set(id, buffer); // Cache each player image
+      // Check cache for the resized buffer
+      let buffer = cache.get(id);
+      if (!buffer) {
+        buffer = await sharp(imagePath).resize(225, 240).toBuffer();
+        cache.set(id, buffer);
+      }
+
       return { input: buffer, top: playerPositions[index].top, left: playerPositions[index].left };
     }));
 
+    // Filter out any null values from the layers array
     const validLayers = layers.filter(layer => layer);
 
-    // Compose final image with webp format and reduced quality to balance file size and quality
+    // Generate the final image with improved quality
     const image = await sharp(fieldBuffer)
       .composite(validLayers)
-      .webp({ quality: 85 }) // Quality can be adjusted as needed
+      .webp({ quality: 90 }) // Adjust quality for better compression without loss
       .toBuffer();
 
     res.setHeader('Content-Type', 'image/webp');
