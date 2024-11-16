@@ -7,13 +7,13 @@ const app = express();
 const fieldImagesFolder = path.join(__dirname, '..', 'images');
 const playersFolder = path.join(__dirname, '..', 'players');
 
-const cache = new Map(); // Cache for resized images
+const cache = new Map(); // Cache em memória
 
 app.get('/api/generate', async (req, res) => {
   try {
     const { campo = 'normal', gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10 } = req.query;
 
-    // Field Image Path
+    // Caminho da imagem do campo
     const fieldImagePath = campo === 'normal' 
       ? path.join(fieldImagesFolder, 'campo.png') 
       : path.join(fieldImagesFolder, `${campo}.png`);
@@ -22,14 +22,14 @@ app.get('/api/generate', async (req, res) => {
       return res.status(404).send("Error: Field image not found.");
     }
 
-    // Load and cache the field image only once
+    // Carregar ou gerar o buffer da imagem do campo
     let fieldBuffer = cache.get(`field_${campo}`);
     if (!fieldBuffer) {
       fieldBuffer = await sharp(fieldImagePath).resize(1062, 1069).toBuffer();
-      cache.set(`field_${campo}`, fieldBuffer);
+      cache.set(`field_${campo}`, fieldBuffer); // Cache em memória
     }
 
-    // Player positions
+    // IDs e posições dos jogadores
     const playerIds = [gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10];
     const playerPositions = [
       { top: 791, left: 423 }, { top: 696, left: 223 }, { top: 699, left: 615 },
@@ -38,30 +38,30 @@ app.get('/api/generate', async (req, res) => {
       { top: 168, left: 749 }, { top: 106, left: 418 }
     ];
 
-    // Prepare the layers
+    // Gerar camadas de jogadores
     const layers = await Promise.all(playerIds.map(async (id, index) => {
       if (!id || id === 'nenhum') return null;
 
       const imagePath = path.join(playersFolder, `${id}.png`);
       if (!fs.existsSync(imagePath)) return null;
 
-      // Check cache for the resized buffer
+      // Verifica o cache em memória
       let buffer = cache.get(id);
       if (!buffer) {
         buffer = await sharp(imagePath).resize(225, 240).toBuffer();
-        cache.set(id, buffer);
+        cache.set(id, buffer); // Cache em memória
       }
 
       return { input: buffer, top: playerPositions[index].top, left: playerPositions[index].left };
     }));
 
-    // Filter out any null values from the layers array
+    // Filtrar camadas válidas
     const validLayers = layers.filter(layer => layer);
 
-    // Generate the final image with improved quality
+    // Gerar imagem final com qualidade ajustada
     const image = await sharp(fieldBuffer)
       .composite(validLayers)
-      .webp({ quality: 90 }) // Adjust quality for better compression without loss
+      .webp({ quality: 90 }) // Qualidade ajustada para melhor desempenho
       .toBuffer();
 
     res.setHeader('Content-Type', 'image/webp');
