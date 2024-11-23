@@ -1,14 +1,11 @@
-const express = require('express');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 
-const app = express();
-
 const fieldImagesFolder = path.join(__dirname, '..', 'images');
 const playersFolder = path.join(__dirname, '..', 'players');
 
-// Mapeamento de formações para arquivos de campo e posições
+//formações
 const formations = {
   '4-3-3': {
     fieldImage: '433.png',
@@ -37,7 +34,6 @@ const formations = {
       { top: 162, left: 750 }, { top: 106, left: 420 }
     ]
   },
-  // Adicione mais formações aqui...
 };
 
 app.get('/api/generate', async (req, res) => {
@@ -50,24 +46,19 @@ app.get('/api/generate', async (req, res) => {
       jogador8, jogador9, jogador10
     } = req.query;
 
-    // Verificar se a formação existe, caso contrário, usar padrão (4-3-3)
     const formation = formations[formacao] || formations['4-3-3'];
 
-    // Caminho da imagem do campo para a formação
     const fieldImagePath = path.join(fieldImagesFolder, formation.fieldImage);
     if (!fs.existsSync(fieldImagePath)) {
-      return res.status(404).send(`Error: Field image for formation "${formacao}" not found.`);
+      return res.status(404).send(`Não foi possível encontrar a formação ${formation} no banco de imagens.`);
     }
 
-    // Carregar a imagem do campo e redimensionar
     const fieldBuffer = await sharp(fieldImagePath)
-      .resize(1062, 1069)  // Ajuste o tamanho para o layout
+      .resize(1062, 1069)
       .toBuffer();
 
-    // IDs dos jogadores
     const playerIds = [gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10];
 
-    // Função para processar a imagem de um jogador
     const processPlayerImage = async (id, index) => {
       if (!id || id === 'nenhum') return null;
 
@@ -75,34 +66,24 @@ app.get('/api/generate', async (req, res) => {
       if (!fs.existsSync(imagePath)) return null;
 
       const buffer = await sharp(imagePath)
-        .resize(225, 240)  // Redimensionar jogador para o tamanho desejado
+        .resize(225, 240)
         .toBuffer();
       return { input: buffer, top: formation.positions[index].top, left: formation.positions[index].left };
     };
 
-    // Processar todas as imagens dos jogadores em paralelo
     const layers = await Promise.all(playerIds.map((id, index) => processPlayerImage(id, index)));
-
-    // Filtrar camadas válidas (não nulas)
     const validLayers = layers.filter(layer => layer);
 
-    // Gerar a imagem final
     const image = await sharp(fieldBuffer)
       .composite(validLayers)
-      .webp({ quality: 85 })  // Qualidade ajustada para balancear desempenho e qualidade
+      .webp({ quality: 90 })
       .toBuffer();
 
-    // Responder com a imagem gerada
     res.setHeader('Content-Type', 'image/webp');
     res.send(image);
 
   } catch (error) {
-    console.error("Error generating image:", error.message);
-    res.status(500).send(`Error generating image: ${error.message}`);
+    console.error("Erro para gerar a imagem:", error.message);
+    res.status(500).send(`Erro para gerar a imagem: ${error.message}`);
   }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 });
