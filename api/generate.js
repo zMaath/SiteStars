@@ -17,7 +17,7 @@ const formations = {
     ]
   },
   '4-3-3B': {
-    fieldImage: '433b.png',
+    fieldImage: '433B.png',
     positions: [
       { top: 791, left: 423 }, { top: 696, left: 223 }, { top: 699, left: 615 },
       { top: 572, left: 19 }, { top: 572, left: 822 }, { top: 479, left: 420 },
