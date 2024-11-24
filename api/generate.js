@@ -1,6 +1,9 @@
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
+const express = require('express')
+
+const app = express();
 
 const fieldImagesFolder = path.join(__dirname, '..', 'images');
 const playersFolder = path.join(__dirname, '..', 'players');
