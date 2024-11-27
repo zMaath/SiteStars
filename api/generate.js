@@ -11,19 +11,19 @@ const playersFolder = path.join(__dirname, '..', 'players');
 //formações
 const formations = {
   '4-3-3': {
-    fieldImage: '433.png',
+    fieldImage: '433teste.png',
     positions: [
-      { top: 791, left: 423 }, { top: 696, left: 223 }, { top: 699, left: 615 },
-      { top: 572, left: 19 }, { top: 572, left: 822 }, { top: 479, left: 420 },
-      { top: 321, left: 250 }, { top: 384, left: 615 }, { top: 162, left: 83 },
-      { top: 168, left: 749 }, { top: 106, left: 418 }
+      { top: 806, left: 434 }, { top: 715, left: 237 }, { top: 715, left: 627 },
+      { left: 0, top: 111 }, { top: 586, left: 836 }, { top: 493, left: 435 },
+      { top: 335, left: 267 }, { top: 395, left: 629 }, { top: 178, left: 102 },
+      { top: 178, left: 763 }, { top: 121, left: 435 }
     ]
   },
   '4-3-3B': {
     fieldImage: '433B.png',
     positions: [
       { top: 791, left: 423 }, { top: 696, left: 223 }, { top: 699, left: 615 },
-      { top: 572, left: 19 }, { top: 572, left: 822 }, { top: 479, left: 420 },
+      { top: 600, left: 206 }, { top: 572, left: 822 }, { top: 479, left: 420 },
       { top: 321, left: 250 }, { top: 384, left: 615 }, { top: 162, left: 83 },
       { top: 168, left: 749 }, { top: 106, left: 418 }
     ]
@@ -31,10 +31,10 @@ const formations = {
   '4-4-2': {
     fieldImage: '442.png',
     positions: [
-      { top: 791, left: 423 }, { top: 696, left: 223 }, { top: 699, left: 615 },
-      { top: 572, left: 19 }, { top: 572, left: 822 }, { top: 325, left: 770 },
-      { top: 400, left: 275 }, { top: 400, left: 560 }, { top: 325, left: 60 },
-      { top: 110, left: 570 }, { top: 110, left: 260 }
+      { top: 806, left: 434 }, { top: 715, left: 237 }, { top: 715, left: 627 },
+      { top: 111, left: 0 }, { top: 586, left: 836 }, { top: 411, left: 288 },
+      { top: 411, left: 580 }, { top: 341, left: 73 }, { top: 341, left: 785 },
+      { top: 125, left: 276 }, { top: 125, left: 585 }, 
     ]
   },
 };
@@ -57,7 +57,7 @@ app.get('/api/generate', async (req, res) => {
     }
 
     const fieldBuffer = await sharp(fieldImagePath)
-      .resize(1062, 1069)
+      .resize(1080, 1080)
       .toBuffer();
 
     const playerIds = [gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10];
@@ -69,7 +69,7 @@ app.get('/api/generate', async (req, res) => {
       if (!fs.existsSync(imagePath)) return null;
 
       const buffer = await sharp(imagePath)
-        .resize(225, 240)
+        .resize(190, 195)
         .toBuffer();
       return { input: buffer, top: formation.positions[index].top, left: formation.positions[index].left };
     };
