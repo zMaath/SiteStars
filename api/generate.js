@@ -14,7 +14,7 @@ const formations = {
     fieldImage: '433teste.png',
     positions: [
       { top: 806, left: 434 }, { top: 715, left: 237 }, { top: 715, left: 627 },
-      { left: 0, top: 111 }, { top: 586, left: 836 }, { top: 493, left: 435 },
+      { left: 38, top: 84 }, { top: 586, left: 836 }, { top: 493, left: 435 },
       { top: 335, left: 267 }, { top: 395, left: 629 }, { top: 178, left: 102 },
       { top: 178, left: 763 }, { top: 121, left: 435 }
     ]
