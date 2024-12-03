@@ -56,9 +56,7 @@ app.get('/api/generate', async (req, res) => {
       return res.status(404).send(`Não foi possível encontrar a formação ${formation} no banco de imagens.`);
     }
 
-    const fieldBuffer = await sharp(fieldImagePath)
-      .resize(1080, 1080)
-      .toBuffer();
+    const fieldBuffer = await sharp(fieldImagePath).toBuffer();
 
     const playerIds = [gk, jogador1, jogador2, jogador3, jogador4, jogador5, jogador6, jogador7, jogador8, jogador9, jogador10];
 
