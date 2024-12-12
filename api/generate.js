@@ -11,7 +11,7 @@ const playersFolder = path.join(__dirname, '..', 'players');
 //formações
 const formations = {
   '4-3-3': {
-    fieldImage: '433teste.png',
+    fieldImage: '433.png',
     positions: [
       { top: 806, left: 434 }, { top: 715, left: 237 }, { top: 715, left: 627 },
       { left: 200, top: 720 }, { top: 586, left: 836 }, { top: 493, left: 435 },
