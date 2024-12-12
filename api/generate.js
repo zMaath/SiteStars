@@ -15,8 +15,8 @@ const formations = {
     positions: [
       { top: 806, left: 434 }, { top: 715, left: 237 }, { top: 715, left: 627 },
       { left: 200, top: 720 }, { top: 586, left: 836 }, { top: 493, left: 435 },
-      { top: 450, left: 540 }, { top: 350, left: 580 }, { top: 178, left: 102 },
-      { top: 178, left: 763 }, { top: 121, left: 435 }
+      { top: 450, left: 540 }, { top: 350, left: 580 }, { top: 359, left: 217 },
+      { top: 178, left: 763 }, { top: 313, left: 536 }
     ]
   },
   '4-3-3B': {
@@ -67,7 +67,7 @@ app.get('/api/generate', async (req, res) => {
       if (!fs.existsSync(imagePath)) return null;
 
       const buffer = await sharp(imagePath)
-        .resize(150, 200)
+        .resize(200, 250)
         .toBuffer();
       return { input: buffer, top: formation.positions[index].top, left: formation.positions[index].left };
     };
