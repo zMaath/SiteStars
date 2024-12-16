@@ -13,10 +13,10 @@ const formations = {
   '4-3-3': {
     fieldImage: '433.png',
     positions: [
-      { top: 806, left: 434 }, { top: 715, left: 237 }, { top: 715, left: 627 },
-      { left: 200, top: 720 }, { top: 586, left: 836 }, { top: 513, left: 366 },
-      { top: 300, left: 275 }, { top: 177, left: 135 }, { top: 359, left: 217 },
-      { top: 178, left: 763 }, { top: 177, left: 536 }
+      { top: 798, left: 465 }, { top: 702, left: 269 }, { top: 702, left: 659 },
+      { top: 582, left: 883 }, { top: 582, left: 48 }, { top: 537, left: 467 },
+      { top: 422, left: 673 }, { top: 327, left: 289 }, { top: 175, left: 145 },
+      { top: 130, left: 462 }, { top: 175, left: 790 },
     ]
   },
   '4-3-3B': {
