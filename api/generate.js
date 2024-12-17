@@ -13,10 +13,10 @@ const formations = {
   '4-3-3': {
     fieldImage: '433.png',
     positions: [
-      { top: 798, left: 465 }, { top: 702, left: 269 }, { top: 702, left: 659 },
-      { top: 582, left: 883 }, { top: 582, left: 48 }, { top: 537, left: 467 },
-      { top: 422, left: 673 }, { top: 327, left: 289 }, { top: 175, left: 145 },
-      { top: 130, left: 462 }, { top: 175, left: 790 },
+      { top: 780, left: 430 }, { top: 665, left: 229 }, { top: 665, left: 627 },
+      { top: 536, left: 848 }, { top: 536, left: 14 }, { top: 450, left: 430 },
+      { top: 323, left: 624 }, { top: 243, left: 253 }, { top: 100, left: 66 },
+      { top: 49, left: 430 }, { top: 100, left: 796 },
     ]
   },
   '4-3-3B': {
@@ -67,7 +67,7 @@ app.get('/api/generate', async (req, res) => {
       if (!fs.existsSync(imagePath)) return null;
 
       const buffer = await sharp(imagePath)
-        .resize(150, 200)
+        .resize(225, 250)
         .toBuffer();
       return { input: buffer, top: formation.positions[index].top, left: formation.positions[index].left };
     };
