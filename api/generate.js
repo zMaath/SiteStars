@@ -22,10 +22,10 @@ const formations = {
   '4-3-3B': {
     fieldImage: '433B.png',
     positions: [
-      { top: 791, left: 423 }, { top: 696, left: 223 }, { top: 699, left: 615 },
-      { top: 600, left: 206 }, { top: 572, left: 822 }, { top: 479, left: 420 },
-      { top: 321, left: 250 }, { top: 384, left: 615 }, { top: 162, left: 83 },
-      { top: 168, left: 749 }, { top: 106, left: 418 }
+      { top: 780, left: 430 }, { top: 665, left: 229 }, { top: 665, left: 627 },
+      { top: 545, left: 847 }, { top: 544, left: 13 }, { top: 450, left: 430 },
+      { top: 323, left: 624 }, { top: 243, left: 253 }, { top: 101, left: 66 },
+      { top: 49, left: 430 }, { top: 103, left: 794 },
     ]
   },
   '4-4-2': {
