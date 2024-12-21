@@ -8,7 +8,7 @@ const app = express();
 const fieldImagesFolder = path.join(__dirname, 'images', 'transferencias.png');
 const playersFolder = path.join(__dirname, '..', 'players');
 
-app.get('/api/generate', async (req, res) => {
+app.get('/api/transfer', async (req, res) => {
   try {
     const {
       jogador1, jogador2, jogador3, dinheiro1, dinheiro2, dinheiro3
