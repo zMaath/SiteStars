@@ -2,17 +2,20 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
+const { registerFont, createCanvas } = require('canvas');
 
 const app = express();
 
-const fieldImagePath = path.join(__dirname, 'images', 'abc.png');
+const fieldImagePath = path.join(__dirname, '..', 'images', 'transfer.png');
 const playersFolder = path.join(__dirname, '..', 'players');
+const fontPath = path.join(__dirname, '..', 'fonts', 'a25-squanova.ttf');
+registerFont(fontPath, { family: 'A25 SQUANOVA' })
 
 // Posições fixas no campo para os jogadores e valores
 const positions = [
-  { top: 100, left: 50 },   // Posição jogador 1
-  { top: 250, left: 50 },   // Posição jogador 2
-  { top: 400, left: 50 },   // Posição jogador 3
+  { top: 80, left: 100 },   // Posição jogador 1
+  { top: 80, left: 320 },   // Posição jogador 2
+  { top: 80, left: 540 },   // Posição jogador 3
 ];
 
 const valuePositions = [
@@ -50,14 +53,17 @@ app.get('/api/transfer', async (req, res) => {
     const processValueText = async (value, index) => {
       if (!value) return null;
 
-      const svgBuffer = Buffer.from(`
-        <svg width="400" height="100">
-          <text x="0" y="50" font-size="40" fill="white">${value}</text>
-        </svg>
-      `);
+      // Cria um canvas para renderizar o texto
+      const canvas = createCanvas(900, 415);
+      const context = canvas.getContext('2d');
+
+      context.textAlign = 'left';
+      context.fillStyle = '#FFFFFF';
+      context.font = '40px "A25 SQUANOVA"';
+      context.fillText(value, 0, 50);
 
       return {
-        input: await sharp(svgBuffer).png().toBuffer(),
+        input: canvas.toBuffer(),
         top: valuePositions[index].top,
         left: valuePositions[index].left,
       };
