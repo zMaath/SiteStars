@@ -63,9 +63,37 @@ app.get('/api/transfer', async (req, res) => {
       }
     
       const buffer = await playerImage.toBuffer();
+    
+      // Se comprado for true, adicionar texto "VENDER"
+      if (comprado === 'true') {
+        const canvas = new Canvas(225, 250);
+        const ctx = canvas.getContext('2d');
+    
+        // Preenche o canvas com a imagem do buffer
+        const img = sharp(buffer).raw().toBuffer({ resolveWithObject: true });
+        const { data, info } = await img;
+        const imageData = ctx.createImageData(info.width, info.height);
+        imageData.data.set(data);
+        ctx.putImageData(imageData, 0, 0);
+    
+        // Configurações do texto
+        ctx.font = 'bold 27px "A25 SQUANOVA"';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 5;
+    
+        // Desenha o texto com contorno
+        ctx.strokeText('COMPRADO', 112.5, 125); // Centro da carta
+        ctx.fillText('COMPRADO', 112.5, 125);
+    
+        // Retorna o buffer com o texto sobreposto
+        return { input: canvas.toBuffer('image/png'), top: positions[index].top, left: positions[index].left };
+      }
+    
+      // Retorna a imagem original sem o texto
       return { input: buffer, top: positions[index].top, left: positions[index].left };
     };
-
     const processCombinedText = async (value, index) => {
       if (!value) return null;
     
