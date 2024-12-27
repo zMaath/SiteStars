@@ -37,7 +37,7 @@ const DescontPositions = [
 
 app.get('/api/transfer', async (req, res) => {
   try {
-    const { jogador1, jogador2, jogador3, dinheiro1, dinheiro2, dinheiro3, porcentagem } = req.query;
+    const { jogador1, jogador2, jogador3, dinheiro1, dinheiro2, dinheiro3, porcentagem, comprado1, comprado2, comprado3 } = req.query;
 
     // Verifica se a imagem do campo existe
     if (!fs.existsSync(fieldImagePath)) {
@@ -49,15 +49,20 @@ app.get('/api/transfer', async (req, res) => {
     const playerIds = [jogador1, jogador2, jogador3];
     const dinheiro = [dinheiro1, dinheiro2, dinheiro3];
 
-    const processPlayerImage = async (id, index) => {
+    const processPlayerImage = async (id, index, comprado) => {
       if (!id || id === 'nenhum') return null;
-
+    
       const imagePath = path.join(playersFolder, `${id}.png`);
       if (!fs.existsSync(imagePath)) return null;
-
-      const buffer = await sharp(imagePath)
-        .resize(225, 250)
-        .toBuffer();
+    
+      let playerImage = sharp(imagePath).resize(225, 250);
+    
+      // Aplica o filtro de preto e branco se "comprado" for true
+      if (comprado === 'true') { // 'true' vem como string em req.query
+        playerImage = playerImage.modulate({ saturation: 0 });
+      }
+    
+      const buffer = await playerImage.toBuffer();
       return { input: buffer, top: positions[index].top, left: positions[index].left };
     };
 
@@ -97,7 +102,8 @@ context.strokeText(formattedTextOriginal, 150, 50);
     };
 
     // Processa as imagens dos jogadores
-    const playerLayers = await Promise.all(playerIds.map((id, index) => processPlayerImage(id, index)));
+    const compradoFlags = [comprado1, comprado2, comprado3];
+    const playerLayers = await Promise.all(playerIds.map((id, index) => processPlayerImage(id, index, compradoFlags[index])));
     const valueLayers = await Promise.all(dinheiro.map((value, index) => processCombinedText(value, index)));
 
     const allLayers = [...playerLayers, ...valueLayers].filter(layer => layer);
