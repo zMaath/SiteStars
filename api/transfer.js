@@ -77,7 +77,7 @@ app.get('/api/transfer', async (req, res) => {
         ctx.putImageData(imageData, 0, 0);
     
         // Configurações do texto
-        ctx.font = 'bold 27px "A25 SQUANOVA"';
+        ctx.font = 'bold 25px "A25 SQUANOVA"';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#FFFFFF';
         ctx.strokeStyle = '#000000';
