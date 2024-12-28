@@ -16,7 +16,8 @@ module.exports = async (req, res) => {
     }
 
     // URL da imagem com redimensionamento para 700x800
-    const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/w_1080,h_1440,c_fill/meus_links/${id}.png`;
+    const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/meus_links/${id}.png`;
+    // const imageUrl = `https://res.cloudinary.com/drxkjmcqx/image/upload/w_1080,h_1440,c_fill/meus_links/${id}.png;`
 
     // Log para depuração
     console.log(`Buscando imagem no URL: ${imageUrl}`);
