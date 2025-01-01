@@ -18,9 +18,9 @@ if (!GlobalFonts.registerFromPath(fontPath, 'A25 SQUANOVA')) {
 
 // Posições fixas no campo para os jogadores e valores
 const positions = [
-  { top: 80, left: 145 },   // Posição jogador 1
-  { top: 80, left: 345 },   // Posição jogador 2
-  { top: 80, left: 545 },   // Posição jogador 3
+  { top: 90, left: 165 },   // Posição jogador 1
+  { top: 90, left: 365 },   // Posição jogador 2
+  { top: 90, left: 565 },   // Posição jogador 3
 ];
 
 const valuePositions = [
@@ -55,7 +55,7 @@ app.get('/api/transfer', async (req, res) => {
       const imagePath = path.join(playersFolder, `${id}.png`);
       if (!fs.existsSync(imagePath)) return null;
     
-      let playerImage = sharp(imagePath).resize(225, 250);
+      let playerImage = sharp(imagePath).resize(190, 215);
     
       // Aplica o filtro de preto e branco se "comprado" for true
       if (comprado === 'true') { // 'true' vem como string em req.query

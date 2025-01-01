@@ -13,10 +13,10 @@ const formations = {
   '4-3-3': {
     fieldImage: '433.png',
     positions: [
-      { top: 763, left: 430 }, { top: 648, left: 229 }, { top: 648, left: 627 },
-      { top: 528, left: 847 }, { top: 528, left: 13 }, { top: 433, left: 430 },
-      { top: 306, left: 624 }, { top: 226, left: 253 }, { top: 84, left: 66 },
-      { top: 32, left: 430 }, { top: 86, left: 794 },
+      { top: 578, left: 327 }, { top: 494, left: 178 }, { top: 494, left: 471 },
+      { top: 406, left: 636 }, { top: 405, left: 18 }, { top: 334, left: 327 },
+      { top: 241, left: 469 }, { top: 181, left: 195 }, { top: 77, left: 56 },
+      { top: 38, left: 327 }, { top: 78, left: 596 },
     ]
   },
   '4-3-3B': {
@@ -67,7 +67,7 @@ app.get('/api/generate', async (req, res) => {
       if (!fs.existsSync(imagePath)) return null;
 
       const buffer = await sharp(imagePath)
-        .resize(225, 250)
+        .resize(150, 175)
         .toBuffer();
       return { input: buffer, top: formation.positions[index].top, left: formation.positions[index].left };
     };
@@ -77,7 +77,7 @@ app.get('/api/generate', async (req, res) => {
 
     const image = await sharp(fieldBuffer)
       .composite(validLayers)
-      .webp({ quality: 90 })
+      .webp({ quality: 100 })
       .toBuffer();
 
     res.setHeader('Content-Type', 'image/webp');
