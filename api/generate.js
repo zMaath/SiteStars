@@ -67,7 +67,7 @@ app.get('/api/generate', async (req, res) => {
       if (!fs.existsSync(imagePath)) return null;
 
       const buffer = await sharp(imagePath)
-        .resize(225, 270)
+        .resize(225, 250)
         .toBuffer();
       return { input: buffer, top: formation.positions[index].top, left: formation.positions[index].left };
     };
