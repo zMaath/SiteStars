@@ -66,7 +66,7 @@ app.get('/api/transfer', async (req, res) => {
     
       // Se comprado for true, adicionar texto "VENDER"
       if (comprado === 'true') {
-        const canvas = new Canvas(225, 250);
+        const canvas = new Canvas(190, 215);
         const ctx = canvas.getContext('2d');
     
         // Preenche o canvas com a imagem do buffer
@@ -84,8 +84,8 @@ app.get('/api/transfer', async (req, res) => {
         ctx.lineWidth = 5;
     
         // Desenha o texto com contorno
-        ctx.strokeText('COMPRADO', 112.5, 125); // Centro da carta
-        ctx.fillText('COMPRADO', 112.5, 125);
+        ctx.strokeText('COMPRADO', 95, 107.5); // Centro da carta
+        ctx.fillText('COMPRADO', 95, 107.5);
     
         // Retorna o buffer com o texto sobreposto
         return { input: canvas.toBuffer('image/png'), top: positions[index].top, left: positions[index].left };
