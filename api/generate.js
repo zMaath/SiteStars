@@ -22,19 +22,19 @@ const formations = {
   '4-3-3B': {
     fieldImage: '433B.png',
     positions: [
-      { top: 780, left: 430 }, { top: 665, left: 229 }, { top: 665, left: 627 },
-      { top: 545, left: 847 }, { top: 544, left: 13 }, { top: 450, left: 430 },
-      { top: 323, left: 624 }, { top: 243, left: 253 }, { top: 101, left: 66 },
-      { top: 49, left: 430 }, { top: 103, left: 794 },
+      { top: 578, left: 327 }, { top: 494, left: 178 }, { top: 494, left: 471 },
+      { top: 406, left: 636 }, { top: 405, left: 18 }, { top: 334, left: 327 },
+      { top: 241, left: 469 }, { top: 181, left: 195 }, { top: 77, left: 56 },
+      { top: 38, left: 327 }, { top: 78, left: 596 },
     ]
   },
-  '4-4-2': {
-    fieldImage: '442.png',
+  '4-2-4': {
+    fieldImage: '424.png',
     positions: [
-      { top: 806, left: 434 }, { top: 715, left: 237 }, { top: 715, left: 627 },
-      { top: 111, left: 0 }, { top: 586, left: 836 }, { top: 411, left: 288 },
-      { top: 411, left: 580 }, { top: 341, left: 73 }, { top: 341, left: 785 },
-      { top: 125, left: 276 }, { top: 125, left: 585 }, 
+      { top: 578, left: 327 }, { top: 494, left: 178 }, { top: 494, left: 471 },
+      { top: 406, left: 636 }, { top: 405, left: 18 }, { top: 334, left: 327 },
+      { top: 241, left: 469 }, { top: 181, left: 195 }, { top: 77, left: 56 },
+      { top: 38, left: 327 }, { top: 78, left: 596 },
     ]
   },
 };

@@ -18,7 +18,7 @@ if (!GlobalFonts.registerFromPath(fontPath, 'A25 SQUANOVA')) {
 
 // Posições fixas no campo para os jogadores e valores
 const positions = [
-    { top: 90, left: 155 },   // Posição jogador 1
+    { top: 90, left: 155                                                                                                     },   // Posição jogador 1
     { top: 90, left: 355 },   // Posição jogador 2
     { top: 90, left: 555 },   // Posição jogador 3
   ];
