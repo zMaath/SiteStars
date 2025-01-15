@@ -13,10 +13,10 @@ const formations = {
   '4-3-3': {
     fieldImage: '433.png',
     positions: [
-      { top: 578, left: 327 }, { top: 494, left: 178 }, { top: 494, left: 471 },
-      { top: 406, left: 636 }, { top: 405, left: 18 }, { top: 334, left: 327 },
-      { top: 241, left: 469 }, { top: 181, left: 195 }, { top: 77, left: 56 },
-      { top: 38, left: 327 }, { top: 78, left: 596 },
+      { top: 588, left: 332 }, { top: 504, left: 183 }, { top: 504, left: 478 },
+      { top: 416, left: 641 }, { top: 415, left: 22 }, { top: 344, left: 332 },
+      { top: 251, left: 474 }, { top: 191, left: 200 }, { top: 87, left: 61 },
+      { top: 48, left: 332 }, { top: 88, left: 601 },
     ]
   },
   '4-3-3B': {
@@ -31,13 +31,23 @@ const formations = {
   '4-2-4': {
     fieldImage: '424.png',
     positions: [
-      { top: 578, left: 327 }, { top: 494, left: 178 }, { top: 494, left: 471 },
-      { top: 406, left: 636 }, { top: 405, left: 18 }, { top: 334, left: 327 },
-      { top: 241, left: 469 }, { top: 181, left: 195 }, { top: 77, left: 56 },
-      { top: 38, left: 327 }, { top: 78, left: 596 },
+      { top: 588, left: 332 },
+      { top: 504, left: 183 }, { top: 504, left: 478 }, { top: 416, left: 641 }, { top: 415, left: 22 },
+      { top: 360, left: 334 }, { top: 146, left: 334 }, 
+      { top: 97, left: 60 }, { top: 32, left: 196 }, { top: 32, left: 475 }, { top: 97, left: 605 },
     ]
   },
 };
+/*
+'4-2-4': [
+  'goleiro',
+  'zagueiros.0', 'zagueiros.1',
+  'laterais.direito', 'laterais.esquerdo',
+  'volante.0',
+  'atacantes.meiaAtacante.0',
+  'atacantes.pontaEsquerda', 'atacantes.centroavante.0', 'atacantes.centroavante.1', 'atacantes.pontaDireita',
+],
+*/
 
 app.get('/api/generate', async (req, res) => {
   try {
@@ -67,7 +77,7 @@ app.get('/api/generate', async (req, res) => {
       if (!fs.existsSync(imagePath)) return null;
 
       const buffer = await sharp(imagePath)
-        .resize(150, 175)
+        .resize(140, 165)
         .toBuffer();
       return { input: buffer, top: formation.positions[index].top, left: formation.positions[index].left };
     };
