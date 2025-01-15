@@ -32,9 +32,9 @@ const formations = {
     fieldImage: '424.png',
     positions: [
       { top: 588, left: 332 },
-      { top: 504, left: 183 }, { top: 504, left: 478 }, { top: 416, left: 641 }, { top: 415, left: 22 },
-      { top: 360, left: 334 }, { top: 146, left: 334 }, 
-      { top: 97, left: 60 }, { top: 32, left: 196 }, { top: 32, left: 475 }, { top: 97, left: 605 },
+      { top: 504, left: 183 }, { top: 504, left: 478 }, { top: 416, left: 640 }, { top: 415, left: 22 },
+      { top: 360, left: 334 }, { top: 145, left: 333 }, 
+      { top: 96, left: 59 }, { top: 31, left: 195 }, { top: 31, left: 473 }, { top: 96, left: 604 },
     ]
   },
 };
