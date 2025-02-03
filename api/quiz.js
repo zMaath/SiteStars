@@ -32,7 +32,7 @@ app.get('/api/quiz', async (req, res) => {
     ctx.textAlign = 'center';
     ctx.fillStyle = '#FFFFFF';
     
-    ctx.font = '29px "A25 SQUANOVA"';
+    ctx.font = '30px "A25 SQUANOVA"';
     ctx.lineWidth = 6; // Largura do contorno (ajuste conforme necessário)
     ctx.strokeStyle = '#00c7ff'; // Cor do contorno (branco)
     ctx.lineJoin = 'round'; // Suaviza os cantos do contorno
@@ -40,7 +40,7 @@ app.get('/api/quiz', async (req, res) => {
       const linhas = pergunta.match(/.{1,45}/g);
 
       linhas.forEach((linha, index) => {
-        const posY = 150 + (index * 35);
+        const posY = 145 + (index * 35);
         ctx.strokeText(linha, 400, posY);
         ctx.fillText(linha, 400, posY);
     });
