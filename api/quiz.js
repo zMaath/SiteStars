@@ -40,7 +40,7 @@ app.get('/api/quiz', async (req, res) => {
       const linhas = pergunta.match(/.{1,45}/g);
 
       linhas.forEach((linha, index) => {
-        const posY = 145 + (index * 35);
+        const posY = 169 + (index * 35);
         ctx.strokeText(linha, 400, posY);
         ctx.fillText(linha, 400, posY);
     });
