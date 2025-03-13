@@ -7,10 +7,10 @@ const app = express();
 app.use(express.json());
 
 app.post("/webhook", async (req, res) => {
-    const { url, public_id } = req.body;
+    const { url, display_name } = req.body;
     
     if (url) {
-        const filePath = path.join(__dirname, "players", `${public_id}.png`);
+        const filePath = path.join(__dirname, "players", `${display_name}.png`);
 
         try {
             const response = await axios({
