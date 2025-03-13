@@ -1,34 +1,33 @@
-const express = require("express");
+const cloudinary = require("cloudinary").v2;
 const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
-const app = express();
-app.use(express.json());
+cloudinary.config({
+    cloud_name: 'drxkjmcqx',
+    api_key: '835598171251887',
+    api_secret: 'Y9nEvGTwOb4WLfTzGx0MW2l9BIM',
+  });
 
-app.post("/webhook", async (req, res) => {
-    const { url, display_name } = req.body;
-    
-    if (url) {
-        const filePath = path.join(__dirname, "players", `${display_name}.png`);
+async function baixarImagens() {
+    try {
+        const { resources } = await cloudinary.api.resources({ max_results: 10 });
 
-        try {
-            const response = await axios({
-                url,
-                responseType: "stream",
-            });
+        for (const resource of resources) {
+            const filePath = path.join(__dirname, "players", `${resource.display_name}.png`);
 
-            response.data.pipe(fs.createWriteStream(filePath));
+            if (!fs.existsSync(filePath)) {
+                const response = await axios({
+                    url: resource.secure_url,
+                    responseType: "stream",
+                });
 
-            console.log(`Imagem salva: ${filePath}`);
-            res.status(200).send("Imagem salva com sucesso.");
-        } catch (error) {
-            console.error("Erro ao baixar imagem:", error);
-            res.status(500).send("Erro ao baixar imagem.");
+                response.data.pipe(fs.createWriteStream(filePath));
+            }
         }
-    } else {
-        res.status(400).send("Nenhuma URL fornecida.");
+    } catch (error) {
+        console.error("Erro ao sincronizar imagens:", error);
     }
-});
+}
 
-app.listen(3000, () => console.log("Servidor rodando na porta 3000"));
+baixarImagens();
