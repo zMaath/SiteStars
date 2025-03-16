@@ -7,11 +7,14 @@ cloudinary.config({
     cloud_name: 'drxkjmcqx',
     api_key: '835598171251887',
     api_secret: 'Y9nEvGTwOb4WLfTzGx0MW2l9BIM',
-  });
+});
 
-async function baixarImagens() {
+async function baixarImagens(nextCursor = null) {
     try {
-        const { resources } = await cloudinary.api.resources({ max_results: 10 });
+        const options = { max_results: 500 };
+        if (nextCursor) options.next_cursor = nextCursor;
+
+        const { resources, next_cursor } = await cloudinary.api.resources(options);
 
         for (const resource of resources) {
             const filePath = path.join(__dirname, "players", `${resource.display_name}.png`);
@@ -23,8 +26,15 @@ async function baixarImagens() {
                 });
 
                 response.data.pipe(fs.createWriteStream(filePath));
+                console.log(`Baixado: ${resource.public_id}`);
             }
         }
+
+        // Se houver mais imagens, continua baixando
+        if (next_cursor) {
+            await baixarImagens(next_cursor);
+        }
+
     } catch (error) {
         console.error("Erro ao sincronizar imagens:", error);
     }
