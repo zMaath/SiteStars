@@ -12,29 +12,29 @@ const playersFolder = path.join(__dirname, '..', 'players');
 const formations = {
   '4-3-3': {
     fieldImage: '433.png',
-    positions: [
-      { top: 588, left: 332 }, { top: 504, left: 183 }, { top: 504, left: 478 },
-      { top: 416, left: 641 }, { top: 415, left: 22 }, { top: 344, left: 332 },
-      { top: 251, left: 474 }, { top: 191, left: 200 }, { top: 87, left: 61 },
-      { top: 48, left: 332 }, { top: 88, left: 601 },
+    positions: [//588, 332
+      { top: 573, left: 324 }, { top: 489, left: 175 }, { top: 489, left: 470 },
+      { top: 401, left: 633 }, { top: 400, left: 14 }, { top: 329, left: 324 },
+      { top: 236, left: 466 }, { top: 176, left: 192 }, { top: 72, left: 53 },
+      { top: 33, left: 324 }, { top: 73, left: 593 }
     ]
   },
   '4-3-3B': {
     fieldImage: '433B.png',
     positions: [
-      { top: 578, left: 327 }, { top: 494, left: 178 }, { top: 494, left: 471 },
-      { top: 406, left: 636 }, { top: 405, left: 18 }, { top: 334, left: 327 },
-      { top: 241, left: 469 }, { top: 181, left: 195 }, { top: 77, left: 56 },
-      { top: 38, left: 327 }, { top: 78, left: 596 },
+      { top: 573, left: 324 }, { top: 489, left: 175 }, { top: 489, left: 470 },
+      { top: 401, left: 633 }, { top: 400, left: 14 }, { top: 329, left: 324 },
+      { top: 236, left: 466 }, { top: 176, left: 192 }, { top: 72, left: 53 },
+      { top: 33, left: 324 }, { top: 73, left: 593 }
     ]
   },
   '4-2-4': {
     fieldImage: '424.png',
     positions: [
-      { top: 588, left: 332 },
-      { top: 504, left: 183 }, { top: 504, left: 478 }, { top: 416, left: 640 }, { top: 415, left: 22 },
-      { top: 360, left: 334 }, { top: 145, left: 333 }, 
-      { top: 96, left: 59 }, { top: 31, left: 195 }, { top: 31, left: 473 }, { top: 96, left: 604 },
+      { top: 573, left: 324 },
+{ top: 489, left: 175 }, { top: 489, left: 470 }, { top: 401, left: 632 }, { top: 400, left: 14 },
+{ top: 345, left: 326 }, { top: 130, left: 325 },
+{ top: 81, left: 51 }, { top: 16, left: 187 }, { top: 16, left: 465 }, { top: 81, left: 596 }
     ]
   },
 };
@@ -77,7 +77,7 @@ app.get('/api/generate', async (req, res) => {
       if (!fs.existsSync(imagePath)) return null;
 
       const buffer = await sharp(imagePath)
-        .resize(140, 165)
+        .resize(155, 180)
         .toBuffer();
       return { input: buffer, top: formation.positions[index].top, left: formation.positions[index].left };
     };
