@@ -8,11 +8,10 @@ const app = express();
 const fieldImagesFolder = path.join(__dirname, '..', 'campos');
 const playersFolder = path.join(__dirname, '..', 'players');
 
-//formações
 const formations = {
   '4-3-3': {
     fieldImage: '433.png',
-    positions: [//588, 332
+    positions: [
       { top: 573, left: 324 }, { top: 489, left: 175 }, { top: 489, left: 470 },
       { top: 401, left: 633 }, { top: 400, left: 14 }, { top: 329, left: 324 },
       { top: 236, left: 466 }, { top: 176, left: 192 }, { top: 72, left: 53 },
@@ -38,16 +37,6 @@ const formations = {
     ]
   },
 };
-/*
-'4-2-4': [
-  'goleiro',
-  'zagueiros.0', 'zagueiros.1',
-  'laterais.direito', 'laterais.esquerdo',
-  'volante.0',
-  'atacantes.meiaAtacante.0',
-  'atacantes.pontaEsquerda', 'atacantes.centroavante.0', 'atacantes.centroavante.1', 'atacantes.pontaDireita',
-],
-*/
 
 app.get('/api/generate', async (req, res) => {
   try {
@@ -101,5 +90,5 @@ app.get('/api/generate', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });

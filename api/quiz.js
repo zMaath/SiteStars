@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const express = require('express');
-const { Canvas, GlobalFonts, loadImage } = require('@napi-rs/canvas'); // Importações do @napi-rs/canvas
+const { Canvas, GlobalFonts, loadImage } = require('@napi-rs/canvas');
 
 const app = express();
 
@@ -18,7 +18,6 @@ app.get('/api/quiz', async (req, res) => {
   try {
     const { pergunta } = req.query;
 
-    // Verifica se a imagem do campo existe
     if (!fs.existsSync(fieldImagePath)) {
       return res.status(404).send(`Imagem do campo não encontrada.`);
     }
@@ -33,9 +32,9 @@ app.get('/api/quiz', async (req, res) => {
     ctx.fillStyle = '#FFFFFF';
     
     ctx.font = '30px "A25 SQUANOVA"';
-    ctx.lineWidth = 6; // Largura do contorno (ajuste conforme necessário)
-    ctx.strokeStyle = '#00c7ff'; // Cor do contorno (branco)
-    ctx.lineJoin = 'round'; // Suaviza os cantos do contorno
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#00c7ff';
+    ctx.lineJoin = 'round';
 
       const linhas = pergunta.match(/.{1,45}/g);
 
@@ -59,5 +58,5 @@ app.get('/api/quiz', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });

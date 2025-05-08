@@ -26,11 +26,9 @@ async function baixarImagens(nextCursor = null) {
                 });
 
                 response.data.pipe(fs.createWriteStream(filePath));
-                console.log(`Baixado: ${resource.public_id}`);
             }
         }
 
-        // Se houver mais imagens, continua baixando
         if (next_cursor) {
             await baixarImagens(next_cursor);
         }
