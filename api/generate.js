@@ -36,6 +36,15 @@ const formations = {
 { top: 81, left: 51 }, { top: 16, left: 187 }, { top: 16, left: 465 }, { top: 81, left: 596 }
     ]
   },
+  '4-2-4B': {
+    fieldImage: '424B.png',
+    positions: [
+      { top: 573, left: 324 },
+{ top: 489, left: 175 }, { top: 489, left: 470 }, { top: 401, left: 632 }, { top: 400, left: 14 },
+{ top: 345, left: 326 }, { top: 129, left: 324 },
+{ top: 78, left: 51 }, { top: 17, left: 187 }, { top: 17, left: 459 }, { top: 78, left: 594 }
+    ]
+  },
 };
 
 app.get('/api/generate', async (req, res) => {
