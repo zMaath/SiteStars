@@ -47,7 +47,7 @@ const processPlayerImage = async (id, index, comprado, colecao) => {
     'CartasBase': 'base',
     'Mundial': 'mundial',
     'AGrandeConquista': 'sula',
-    'Libertadores': 'liberta',
+    'GloriaEterna': 'liberta',
     'TributoAosClassicos': 'tributo',
   };
 
