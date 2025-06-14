@@ -48,7 +48,7 @@ const processPlayerImage = async (id, index, comprado, colecao) => {
     'Mundial': 'mundial',
     'AGrandeConquista': 'sula',
     'GloriaEterna': 'liberta',
-    'TributoAosClassicos': 'tributo',
+    'TributoaosClassicos': 'tributo',
   };
 
   const playerPath = path.join(playersFolder, `${id}.png`);
