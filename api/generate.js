@@ -115,8 +115,8 @@ const formations = {
     positions: [
       { top: 580, left: 324 },
 { top: 474, left: 173 }, { top: 474, left: 473 }, { top: 400, left: 639 }, { top: 400, left: 8 },
-{ top: 264, left: 232 }, { top: 264, left: 414 }, { top: 39, left: 232 }, { top: 39, left: 414 },
-{ top: 128, left: 82 }, { top: 128, left: 564 }
+{ top: 264, left: 232 }, { top: 264, left: 414 }, { top: 128, left: 82 }, { top: 128, left: 564 },
+{ top: 39, left: 232 }, { top: 39, left: 414 },
     ]
   },
       '4-4-2B': {
@@ -124,8 +124,8 @@ const formations = {
     positions: [
       { top: 580, left: 324 },
 { top: 474, left: 173 }, { top: 474, left: 473 }, { top: 400, left: 639 }, { top: 400, left: 8 },
-{ top: 264, left: 232 }, { top: 264, left: 414 }, { top: 39, left: 232 }, { top: 39, left: 414 },
-{ top: 128, left: 82 }, { top: 128, left: 564 }
+{ top: 264, left: 232 }, { top: 264, left: 414 }, { top: 128, left: 82 }, { top: 128, left: 564 },
+{ top: 39, left: 232 }, { top: 39, left: 414 },
     ]
   },
 };
