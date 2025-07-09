@@ -6,7 +6,14 @@ const express = require('express')
 const app = express();
 
 const fieldImagesFolder = path.join(__dirname, '..', 'campos');
-const playersFolder = path.join(__dirname, 'public', 'players');
+
+const axios = require('axios');
+
+async function getImageBufferFromPublic(id) {
+  const url = `https://ustars.vercel.app/cards/${id}.png`;
+  const response = await axios.get(url, { responseType: 'arraybuffer' });
+  return Buffer.from(response.data, 'binary');
+}
 /*     { top: 573, left: 324 }, { top: 489, left: 175 }, { top: 489, left: 470 },
       { top: 401, left: 633 }, { top: 400, left: 14 }, { top: 329, left: 324 },
       { top: 236, left: 466 }, { top: 176, left: 192 }, { top: 72, left: 53 },
@@ -154,10 +161,9 @@ app.get('/api/generate', async (req, res) => {
     const processPlayerImage = async (id, index) => {
       if (!id || id === 'nenhum') return null;
 
-      const imagePath = path.join(playersFolder, `${id}.png`);
-      if (!fs.existsSync(imagePath)) return null;
+      const bufferImage = await getImageBufferFromPublic(id);
 
-      const buffer = await sharp(imagePath)
+      const buffer = await sharp(bufferImage)
         .resize(155, 180)
         .toBuffer();
       return { input: buffer, top: formation.positions[index].top, left: formation.positions[index].left };
