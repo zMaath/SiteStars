@@ -6,7 +6,7 @@ const express = require('express')
 const app = express();
 
 const fieldImagesFolder = path.join(__dirname, '..', 'campos');
-const playersFolder = path.join(__dirname, '..', 'players');
+const playersFolder = path.join(__dirname, 'public', 'players');
 /*     { top: 573, left: 324 }, { top: 489, left: 175 }, { top: 489, left: 470 },
       { top: 401, left: 633 }, { top: 400, left: 14 }, { top: 329, left: 324 },
       { top: 236, left: 466 }, { top: 176, left: 192 }, { top: 72, left: 53 },

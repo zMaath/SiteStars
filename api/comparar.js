@@ -7,7 +7,7 @@ const { Canvas, GlobalFonts } = require('@napi-rs/canvas');
 const app = express();
 
 const fieldImagePath = path.join(__dirname, '..', 'images', 'comparativo.png');
-const playersFolder = path.join(__dirname, '..', 'players');
+const playersFolder = path.join(__dirname, 'public', 'players');
 const fontPath = path.join(__dirname, '..', 'fonts', 'a25-squanova.ttf');
 
 if (!GlobalFonts.registerFromPath(fontPath, 'A25 SQUANOVA')) {
