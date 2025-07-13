@@ -17,7 +17,7 @@ async function baixarImagens(nextCursor = null) {
         const { resources, next_cursor } = await cloudinary.api.resources(options);
 
         for (const resource of resources) {
-            const filePath = path.join(__dirname, "players", `${resource.display_name}.png`);
+            const filePath = path.join(__dirname, "public", "players", `${resource.display_name}.png`);
 
             if (!fs.existsSync(filePath)) {
                 const response = await axios({
