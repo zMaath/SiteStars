@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const router = express.Router();
 
-function generateId(existingFiles) {
+function generateUniqueId(existingFiles) {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let id;
   do {
@@ -15,15 +15,18 @@ function generateId(existingFiles) {
 }
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: (req, file, cb) => {
     const dir = path.join(__dirname, '..', 'public', 'cards');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
     cb(null, dir);
   },
-  filename: function (req, file, cb) {
+  filename: (req, file, cb) => {
     const dir = path.join(__dirname, '..', 'public', 'cards');
     const existingFiles = fs.readdirSync(dir);
-    const id = generateId(existingFiles);
-    cb(null, `${id}.png`);
+    const id = generateUniqueId(existingFiles);
+    cb(null, `${id}${path.extname(file.originalname)}`);
   }
 });
 
@@ -35,7 +38,7 @@ router.post('/', upload.single('imagem'), (req, res) => {
   }
 
   const fileName = path.basename(req.file.filename);
-  const finalUrl = `https://site-stars.vercel.app/cards/${fileName}`;
+  const finalUrl = `https://ustars.vercel.app/cards/${fileName}`;
   res.json({ url: finalUrl });
 });
 
