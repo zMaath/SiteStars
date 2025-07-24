@@ -3,7 +3,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const router = express.Router();
+const app = express();
+const PORT = 3000;
 
 function generateUniqueId(existingFiles) {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -16,14 +17,12 @@ function generateUniqueId(existingFiles) {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = path.join(__dirname, '..', 'public', 'cards');
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
+    const dir = path.join(__dirname, 'public', 'cards');
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    const dir = path.join(__dirname, '..', 'public', 'cards');
+    const dir = path.join(__dirname, 'public', 'cards');
     const existingFiles = fs.readdirSync(dir);
     const id = generateUniqueId(existingFiles);
     cb(null, `${id}${path.extname(file.originalname)}`);
@@ -32,14 +31,17 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.post('/', upload.single('imagem'), (req, res) => {
+app.post('/api/up', upload.single('imagem'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'Nenhuma imagem enviada.' });
   }
-
   const fileName = path.basename(req.file.filename);
-  const finalUrl = `https://ustars.vercel.app/cards/${fileName}`;
+  const finalUrl = `http://localhost:${PORT}/cards/${fileName}`;
   res.json({ url: finalUrl });
 });
 
-module.exports = router;
+app.use('/cards', express.static(path.join(__dirname, 'public', 'cards')));
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
+});
