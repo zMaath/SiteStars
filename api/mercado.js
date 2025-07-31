@@ -66,7 +66,9 @@ app.get('/api/mercado', async (req, res) => {
       'GloriaEterna': 'liberta',
       'TributoaosClassicos': 'tributo',
       'Codinome': 'codi',
-      'MundialCampeao': 'mundialcampeao'
+      'MundialCampeao': 'mundialcampeao',
+      'CraquesMensais': 'craquesmensais',
+      'CopadoBrasil': 'copabrasil'
     };
 
     const processPlayerImage = async (id, index, comprado, colecao) => {
