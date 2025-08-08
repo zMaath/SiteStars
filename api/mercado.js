@@ -103,7 +103,7 @@ app.get('/api/mercado', async (req, res) => {
         ctx.strokeText('COMPRADO', 175, 250);
         ctx.fillText('COMPRADO', 175, 250);
 
-        finalPlayerBuffer = canvas.toBuffer('image/png');
+        finalPlayerBuffer = canvas.toBuffer('image/webp');
       }
 
       let baseLayer = null;
@@ -182,7 +182,7 @@ app.get('/api/mercado', async (req, res) => {
       context.fillText(formattedTextDesconto, 200, 500);
 
       return {
-        input: await canvas.toBuffer('image/png'),
+        input: await canvas.toBuffer('image/webp'),
         top: valuePositions[index].top,
         left: valuePositions[index].left,
       };

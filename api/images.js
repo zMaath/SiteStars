@@ -20,7 +20,7 @@ const app = express();
     }
 
     const imageBuffer = fs.readFileSync(imagePath);
-    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Type', 'image/webp');
     res.send(imageBuffer);
 
   } catch (error) {

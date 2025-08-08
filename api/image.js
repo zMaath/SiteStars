@@ -14,7 +14,7 @@ app.get('/cards/:imageName', async (req, res) => {
       return res.status(response.status).send('Imagem não encontrada');
     }
 
-    res.set('Content-Type', response.headers.get('content-type') || 'image/png');
+    res.set('Content-Type', response.headers.get('content-type') || 'image/webp');
     res.set('Cache-Control', 'public, max-age=31536000, immutable');
 
     const buffer = Buffer.from(await response.arrayBuffer());
