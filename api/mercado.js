@@ -69,7 +69,8 @@ app.get('/api/mercado', async (req, res) => {
       'MundialCampeao': 'mundialcampeao',
       'CraquesMensais': 'craquesmensais',
       'CopadoBrasil': 'copabrasil',
-      'InteligenciaTatica': 'inte'
+      'InteligenciaTatica': 'inte',
+      'ChampionsLeague': 'cham',
     };
 
     const processPlayerImage = async (id, index, comprado, colecao) => {
