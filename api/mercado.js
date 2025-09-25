@@ -71,6 +71,7 @@ app.get('/api/mercado', async (req, res) => {
       'CopadoBrasil': 'copabrasil',
       'InteligenciaTatica': 'inte',
       'ChampionsLeague': 'cham',
+      "BallonD'Or": 'bal',
     };
 
     const processPlayerImage = async (id, index, comprado, colecao) => {
